@@ -11,8 +11,16 @@ const Header = () => {
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+        if (isSearchOpen) setIsSearchOpen(false);
+    };
+    const toggleSearch = () => {
+        setIsSearchOpen(!isSearchOpen);
+        if (isMenuOpen) setIsMenuOpen(false);
+    };
     const closeMenu = () => setIsMenuOpen(false);
 
     return (
@@ -54,9 +62,12 @@ const Header = () => {
                         </div>
                     </div>
                     <div className="header-actions">
-                        <div className="search-bar bg-glass">
+                        <button className="mobile-only pc-icon-btn" onClick={toggleSearch}>
+                            {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+                        </button>
+                        <div className={`search-bar bg-glass ${isSearchOpen ? 'mobile-show' : ''}`}>
                             <input type="text" placeholder="Search instruments..." />
-                            <Search size={18} />
+                            <Search size={18} className="desktop-search-icon" />
                         </div>
                         <Link to="/cart" className="cart-link">
                             <ShoppingCart size={22} />
