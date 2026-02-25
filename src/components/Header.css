@@ -123,6 +123,7 @@
     position: relative;
     padding-bottom: 3px;
     transition: color var(--transition);
+    text-decoration: none;
 }
 
 .nav-links a::after {
