@@ -787,6 +787,8 @@
 
     .partner-stats {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 16px;
     }
 
     .products-grid-4,
