@@ -99,3 +99,32 @@
 .checkout-btn {
     height: 50px;
 }
+
+/* ── Responsive Cart ── */
+@media (max-width: 900px) {
+    .cart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-summary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .cart-item img {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 15px;
+    }
+
+    .item-details {
+        margin-bottom: 10px;
+    }
+}

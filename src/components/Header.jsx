@@ -1,4 +1,5 @@
-import { ShoppingCart, User, Menu, Search, Phone, Mail, Heart } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search, Phone, Mail, Heart } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -9,6 +10,10 @@ import './Header.css';
 const Header = () => {
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const closeMenu = () => setIsMenuOpen(false);
 
     return (
         <header className="header bg-glass">
@@ -34,12 +39,19 @@ const Header = () => {
                         <img src="/ar.svg" alt="AR Surgical Hub" className="logo-img" />
                         <span className="logo-text">Surgical Hub</span>
                     </Link>
-                    <div className="nav-links">
-                        <Link to="/">Home</Link>
-                        <Link to="/shop">Products</Link>
-                        <Link to="/categories">Categories</Link>
-                        <Link to="/careers">Careers</Link>
-                        <Link to="/quotes">Get a Quote</Link>
+                    <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+                        <Link to="/" onClick={closeMenu}>Home</Link>
+                        <Link to="/shop" onClick={closeMenu}>Products</Link>
+                        <Link to="/categories" onClick={closeMenu}>Categories</Link>
+                        <Link to="/careers" onClick={closeMenu}>Careers</Link>
+                        <Link to="/quotes" onClick={closeMenu}>Get a Quote</Link>
+                        <div className="mobile-only mobile-user-links">
+                            {user ? (
+                                <button onClick={() => { logout(); closeMenu(); }} className="toggle-btn">Logout</button>
+                            ) : (
+                                <Link to="/login" onClick={closeMenu}><User size={18} /> Login / Register</Link>
+                            )}
+                        </div>
                     </div>
                     <div className="header-actions">
                         <div className="search-bar bg-glass">
@@ -53,6 +65,9 @@ const Header = () => {
                         <Link to="/wishlist" className="cart-link">
                             <Heart size={22} />
                         </Link>
+                        <button className="mobile-only menu-toggle" onClick={toggleMenu}>
+                            {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+                        </button>
                     </div>
                 </nav>
             </div>

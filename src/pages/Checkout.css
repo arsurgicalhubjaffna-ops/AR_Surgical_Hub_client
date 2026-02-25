@@ -62,3 +62,21 @@
     color: var(--text-secondary);
     margin-bottom: 10px;
 }
+
+/* ── Responsive Checkout ── */
+@media (max-width: 900px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-form {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .payment-options {
+        flex-direction: column;
+        gap: 12px;
+    }
+}

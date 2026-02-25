@@ -162,3 +162,56 @@
     outline: none;
     font-family: var(--font-primary);
 }
+
+/* ── Responsive Product Detail ── */
+@media (max-width: 768px) {
+    .product-detail {
+        padding: 40px 0;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .detail-image {
+        padding: 20px;
+    }
+
+    .detail-info {
+        text-align: center;
+    }
+
+    .detail-info h1 {
+        font-size: 2rem;
+    }
+
+    .detail-info .price {
+        font-size: 1.5rem;
+    }
+
+    .detail-info .description {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
+    .trust-badges {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+    }
+
+    .detail-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .reviews-section {
+        margin-top: 50px;
+        padding-top: 40px;
+    }
+}

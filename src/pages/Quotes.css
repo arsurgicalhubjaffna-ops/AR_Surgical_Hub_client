@@ -53,3 +53,19 @@
     height: 55px;
     margin-top: 10px;
 }
+
+/* ── Responsive Quotes ── */
+@media (max-width: 900px) {
+    .quotes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quotes-info {
+        order: 2;
+    }
+
+    .quotes-form {
+        order: 1;
+        padding: 24px;
+    }
+}

@@ -120,3 +120,44 @@
     color: var(--text-primary);
     font-weight: 600;
 }
+
+/* ── Responsive Shop ── */
+@media (max-width: 900px) {
+    .shop-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .shop-sidebar {
+        position: static;
+        margin-bottom: 24px;
+    }
+
+    .filter-list {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-item {
+        white-space: nowrap;
+    }
+
+    .shop-header {
+        text-align: center;
+        padding: 24px 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}
