@@ -87,6 +87,13 @@
     color: var(--primary) !important;
 }
 
+.hero-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+}
+
 /* ── Hero visual ── */
 .hero-visual {
     position: relative;
@@ -796,7 +803,8 @@
     }
 
     .promo-body p,
-    .promo-wide-inner p {
+    .promo-wide-inner p,
+    .partner-text p {
         margin-left: auto;
         margin-right: auto;
     }
