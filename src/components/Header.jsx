@@ -62,22 +62,22 @@ const Header = () => {
                         </div>
                     </div>
                     <div className="header-actions">
-                        <button className="mobile-only pc-icon-btn" onClick={toggleSearch}>
-                            {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+                        <button className="mobile-only header-action-btn" onClick={toggleSearch}>
+                            {isSearchOpen ? <X size={22} /> : <Search size={22} />}
                         </button>
                         <div className={`search-bar bg-glass ${isSearchOpen ? 'mobile-show' : ''}`}>
                             <input type="text" placeholder="Search instruments..." />
                             <Search size={18} className="desktop-search-icon" />
                         </div>
-                        <Link to="/cart" className="cart-link">
+                        <Link to="/cart" className="header-action-btn">
                             <ShoppingCart size={22} />
-                            <span className="cart-count">{cartCount}</span>
+                            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
                         </Link>
-                        <Link to="/wishlist" className="cart-link">
+                        <Link to="/wishlist" className="header-action-btn wishlist-mobile-hide">
                             <Heart size={22} />
                         </Link>
-                        <button className="mobile-only menu-toggle" onClick={toggleMenu}>
-                            {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+                        <button className="header-action-btn menu-toggle" onClick={toggleMenu}>
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
                     </div>
                 </nav>
