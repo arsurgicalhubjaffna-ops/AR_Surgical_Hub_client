@@ -274,7 +274,7 @@
 
 .mobile-logout-link {
     background: #fff;
-    border: 1px solid var(--green-border);
+    border: 1px solid var(--green);
     color: var(--green);
     font-size: 1rem;
     font-weight: 700;
@@ -286,6 +286,10 @@
     margin-top: 30px;
     font-family: var(--font-primary);
     transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .mobile-logout-link:hover {
