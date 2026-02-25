@@ -415,6 +415,11 @@
         /* Hide hamburger on desktop */
     }
 
+    .menu-toggle {
+        display: flex !important;
+        /* Show hamburger only on mobile */
+    }
+
     /* Standardized Premium Boxed Icons (Ultimate Polish) */
     .header-actions {
         gap: 8px;
