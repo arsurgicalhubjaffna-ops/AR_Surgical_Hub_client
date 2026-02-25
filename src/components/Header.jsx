@@ -1,4 +1,4 @@
-import { ShoppingCart, User, Menu, X, Search, Phone, Mail, Heart } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search, Phone, Mail, Heart, LogOut, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -74,7 +74,9 @@ const Header = () => {
                             <Link to="/quotes" onClick={closeMenu}>Get a Quote</Link>
                             <div className="mobile-only mobile-user-links">
                                 {user ? (
-                                    <button onClick={() => { logout(); closeMenu(); }} className="mobile-logout-link">Logout</button>
+                                    <button onClick={() => { logout(); closeMenu(); }} className="mobile-logout-link">
+                                        <LogOut size={18} /> Logout
+                                    </button>
                                 ) : (
                                     <Link to="/login" onClick={closeMenu}><User size={18} /> Login / Register</Link>
                                 )}
