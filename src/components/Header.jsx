@@ -1,4 +1,4 @@
-import { ShoppingCart, User, Menu, X, Search, Phone, Mail, Heart, LogOut, ArrowRight } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search, Phone, Mail, Heart, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -38,7 +38,6 @@ const Header = () => {
 
     return (
         <>
-            {isMenuOpen && <div className="menu-backdrop" onClick={closeMenu} />}
             <div className="header-announcement">
                 <div className="container">
                     <div className="header-top">
@@ -59,6 +58,7 @@ const Header = () => {
                     </div>
                 </div>
             </div>
+
             <header className="header bg-glass">
                 <div className="container">
                     <nav className="header-main">
@@ -66,22 +66,7 @@ const Header = () => {
                             <img src="/ar.svg" alt="AR Surgical Hub" className="logo-img" />
                             <span className="logo-text">Surgical Hub</span>
                         </Link>
-                        <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-                            <Link to="/" onClick={closeMenu}>Home</Link>
-                            <Link to="/shop" onClick={closeMenu}>Products</Link>
-                            <Link to="/categories" onClick={closeMenu}>Categories</Link>
-                            <Link to="/careers" onClick={closeMenu}>Careers</Link>
-                            <Link to="/quotes" onClick={closeMenu}>Get a Quote</Link>
-                            <div className="mobile-only mobile-user-links">
-                                {user ? (
-                                    <button onClick={() => { logout(); closeMenu(); }} className="mobile-logout-link">
-                                        <LogOut size={18} /> Logout
-                                    </button>
-                                ) : (
-                                    <Link to="/login" onClick={closeMenu}><User size={18} /> Login / Register</Link>
-                                )}
-                            </div>
-                        </div>
+
                         <div className="header-actions">
                             <button className="mobile-only header-action-btn" onClick={toggleSearch}>
                                 {isSearchOpen ? <X size={22} /> : <Search size={22} />}
@@ -106,6 +91,27 @@ const Header = () => {
                     </nav>
                 </div>
             </header>
+
+            {/* Menu Backdrop with Premium blur */}
+            <div className={`menu-backdrop ${isMenuOpen ? 'active' : ''}`} onClick={closeMenu} />
+
+            {/* Side Drawer (Moved to top-level for absolute stability) */}
+            <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+                <Link to="/" onClick={closeMenu}>Home</Link>
+                <Link to="/shop" onClick={closeMenu}>Products</Link>
+                <Link to="/categories" onClick={closeMenu}>Categories</Link>
+                <Link to="/careers" onClick={closeMenu}>Careers</Link>
+                <Link to="/quotes" onClick={closeMenu}>Get a Quote</Link>
+                <div className="mobile-only mobile-user-links">
+                    {user ? (
+                        <button onClick={() => { logout(); closeMenu(); }} className="mobile-logout-link">
+                            <LogOut size={18} /> Logout
+                        </button>
+                    ) : (
+                        <Link to="/login" onClick={closeMenu}><User size={18} /> Login / Register</Link>
+                    )}
+                </div>
+            </div>
         </>
     );
 };
