@@ -55,7 +55,7 @@ const Header = () => {
                         <Link to="/quotes" onClick={closeMenu}>Get a Quote</Link>
                         <div className="mobile-only mobile-user-links">
                             {user ? (
-                                <button onClick={() => { logout(); closeMenu(); }} className="toggle-btn">Logout</button>
+                                <button onClick={() => { logout(); closeMenu(); }} className="mobile-logout-link">Logout</button>
                             ) : (
                                 <Link to="/login" onClick={closeMenu}><User size={18} /> Login / Register</Link>
                             )}
@@ -71,9 +71,9 @@ const Header = () => {
                         </div>
                         <Link to="/cart" className="header-action-btn">
                             <ShoppingCart size={22} />
-                            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                            <span className="cart-count">{cartCount}</span>
                         </Link>
-                        <Link to="/wishlist" className="header-action-btn wishlist-mobile-hide">
+                        <Link to="/wishlist" className="header-action-btn">
                             <Heart size={22} />
                         </Link>
                         <button className="header-action-btn menu-toggle" onClick={toggleMenu}>
