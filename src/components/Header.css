@@ -57,6 +57,7 @@
     color: var(--text-secondary);
     font-size: 0.82rem;
     transition: color var(--transition);
+    text-decoration: none;
 }
 
 .user-links a:hover {
