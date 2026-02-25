@@ -67,6 +67,14 @@ const Header = () => {
                             <span className="logo-text">Surgical Hub</span>
                         </Link>
 
+                        <div className="nav-links desktop-only">
+                            <Link to="/">Home</Link>
+                            <Link to="/shop">Products</Link>
+                            <Link to="/categories">Categories</Link>
+                            <Link to="/careers">Careers</Link>
+                            <Link to="/quotes">Get a Quote</Link>
+                        </div>
+
                         <div className="header-actions">
                             <button className="mobile-only header-action-btn" onClick={toggleSearch}>
                                 {isSearchOpen ? <X size={22} /> : <Search size={22} />}
@@ -95,14 +103,14 @@ const Header = () => {
             {/* Menu Backdrop with Premium blur */}
             <div className={`menu-backdrop ${isMenuOpen ? 'active' : ''}`} onClick={closeMenu} />
 
-            {/* Side Drawer (Moved to top-level for absolute stability) */}
-            <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+            {/* Side Drawer (Top-level for absolute stability) */}
+            <div className={`mobile-drawer ${isMenuOpen ? 'open' : ''}`}>
                 <Link to="/" onClick={closeMenu}>Home</Link>
                 <Link to="/shop" onClick={closeMenu}>Products</Link>
                 <Link to="/categories" onClick={closeMenu}>Categories</Link>
                 <Link to="/careers" onClick={closeMenu}>Careers</Link>
                 <Link to="/quotes" onClick={closeMenu}>Get a Quote</Link>
-                <div className="mobile-only mobile-user-links">
+                <div className="mobile-user-links">
                     {user ? (
                         <button onClick={() => { logout(); closeMenu(); }} className="mobile-logout-link">
                             <LogOut size={18} /> Logout

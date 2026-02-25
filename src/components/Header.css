@@ -106,10 +106,14 @@
     }
 }
 
-/* Nav links - Desktop default */
+/* Nav links - Desktop */
 .nav-links {
     display: flex;
     gap: 32px;
+}
+
+.mobile-drawer {
+    display: none;
 }
 
 .nav-links a {
@@ -336,8 +340,12 @@
         font-size: 0.9rem;
     }
 
-    /* Side Drawer - Moved to top-level for absolute stability */
-    .nav-links {
+    /* Mobile Drawer - Moved to top-level for absolute stability */
+    .nav-links.desktop-only {
+        display: none !important;
+    }
+
+    .mobile-drawer {
         position: fixed;
         top: 0;
         right: 0;
@@ -356,19 +364,17 @@
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
         z-index: 2000;
         overflow-y: auto;
-        display: none;
-        /* Default hidden on mobile */
+        display: flex;
+        /* Always flex when active on mobile */
     }
 
-    .nav-links.open {
-        display: flex;
-        /* Show only when needed */
+    .mobile-drawer.open {
         visibility: visible;
         pointer-events: all;
         transform: translate3d(0, 0, 0);
     }
 
-    .nav-links a {
+    .mobile-drawer a {
         font-size: 1rem;
         font-weight: 600;
         width: 100%;
