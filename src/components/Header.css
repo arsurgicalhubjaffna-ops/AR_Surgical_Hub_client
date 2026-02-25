@@ -369,19 +369,19 @@
         display: flex !important;
     }
 
-    /* Standardized Premium Boxed Icons */
+    /* Standardized Premium Boxed Icons (Ultimate Polish) */
     .header-actions {
-        gap: 6px;
+        gap: 8px;
         z-index: 2001;
         /* Stay ABOVE the nav-links/drawer */
     }
 
     .header-action-btn {
-        width: 38px !important;
-        height: 38px !important;
+        width: 42px !important;
+        height: 42px !important;
         background: #ffffff !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 10px !important;
+        border: 1.5px solid var(--border) !important;
+        border-radius: 12px !important;
         box-shadow: var(--shadow-sm) !important;
         display: flex !important;
         align-items: center !important;
@@ -389,16 +389,23 @@
         padding: 0 !important;
         color: var(--text-secondary) !important;
         cursor: pointer;
+        transition: all 0.2s ease !important;
     }
 
-    /* Search Toggle Specific */
+    .header-action-btn:active {
+        transform: scale(0.95);
+        background: var(--green-light) !important;
+        border-color: var(--green) !important;
+    }
+
+    /* Glossy Medical Search Bar Trigger */
     .search-bar {
         display: none;
         position: absolute;
         top: 100%;
         left: 0;
         width: 100%;
-        padding: 15px 20px;
+        padding: 18px 20px;
         background: #ffffff;
         border-top: 1px solid var(--border);
         box-shadow: var(--shadow-md);
@@ -407,15 +414,43 @@
 
     .search-bar.mobile-show {
         display: flex;
+        animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .search-bar .search-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        background: var(--green-light);
+        border-radius: 25px;
+        padding: 4px 16px;
+        border: 1px solid var(--green-border);
     }
 
     .search-bar input {
         width: 100%;
+        height: 40px;
+        background: none;
+        border: none;
+        outline: none;
         font-size: 1rem;
+        color: var(--text-primary);
     }
 
     .desktop-search-icon {
         display: none;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 

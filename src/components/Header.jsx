@@ -87,8 +87,10 @@ const Header = () => {
                                 {isSearchOpen ? <X size={22} /> : <Search size={22} />}
                             </button>
                             <div className={`search-bar bg-glass ${isSearchOpen ? 'mobile-show' : ''}`}>
-                                <input type="text" placeholder="Search instruments..." />
-                                <Search size={18} className="desktop-search-icon" />
+                                <div className="search-inner">
+                                    <input type="text" placeholder="Search instruments..." />
+                                    <Search size={18} className="desktop-search-icon" />
+                                </div>
                             </div>
                             <Link to="/cart" className="header-action-btn">
                                 <ShoppingCart size={22} />
