@@ -246,13 +246,25 @@
     .header-action-btn {
         width: 36px;
         height: 36px;
-        background: transparent;
-        border-color: transparent;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 8px;
     }
+}
 
-    .wishlist-mobile-hide {
-        display: none;
-    }
+.mobile-logout-link {
+    background: none;
+    border: none;
+    color: var(--green);
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 25px 0;
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    border-top: 1.5px solid var(--border);
+    margin-top: 25px;
+    font-family: var(--font-primary);
 }
 
 /* Search */
