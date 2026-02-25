@@ -27,7 +27,8 @@ const Login = () => {
             }
             navigate('/');
         } catch (err) {
-            alert('Authentication failed. Please check your credentials.');
+            const errorMsg = err.response?.data?.error || err.message || 'Authentication failed. Please check your credentials.';
+            alert(errorMsg);
         }
     };
 
