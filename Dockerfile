@@ -8,15 +8,10 @@ RUN npm run build
 
 # Production stage
 FROM nginx:stable-alpine
+# Copy the built assets
 COPY --from=build /app/dist /usr/share/nginx/html
-# Copy default nginx config to handle SPA routing
-RUN echo 'server { \
-    listen 80; \
-    location / { \
-    root /usr/share/nginx/html; \
-    index index.html index.htm; \
-    try_files $uri $uri/ /index.html; \
-    } \
-    }' > /etc/nginx/conf.d/default.conf
-EXPOSE 80
+# Copy the custom nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
