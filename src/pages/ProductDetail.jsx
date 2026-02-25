@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config/api';
 import { ShoppingCart, Heart, Shield, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -23,8 +24,8 @@ const ProductDetail = () => {
     const fetchDetails = async () => {
         try {
             const [productRes, reviewsRes] = await Promise.all([
-                axios.get(`http://localhost:5000/api/products/${id}`),
-                axios.get(`http://localhost:5000/api/reviews/${id}`)
+                axios.get(`${API_URL}/api/products/${id}`),
+                axios.get(`${API_URL}/api/reviews/${id}`)
             ]);
             setProduct(productRes.data);
             setReviews(reviewsRes.data);
@@ -47,7 +48,7 @@ const ProductDetail = () => {
         }
         setReviewLoading(true);
         try {
-            await axios.post('http://localhost:5000/api/reviews', {
+            await axios.post(`${API_URL}/api/reviews`, {
                 product_id: id,
                 user_id: user.id,
                 rating: newReviewRating,
