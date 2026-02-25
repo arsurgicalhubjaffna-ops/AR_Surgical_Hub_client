@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Briefcase, MapPin, DollarSign, Clock } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../config/api';
 import './Careers.css';
 
 const Careers = () => {
@@ -10,7 +11,7 @@ const Careers = () => {
     useEffect(() => {
         const fetchVacancies = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/vacancies');
+                const res = await axios.get(`${API_URL}/api/vacancies`);
                 setVacancies(res.data);
             } catch (err) {
                 console.error(err);

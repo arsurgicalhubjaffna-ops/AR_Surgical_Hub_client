@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Send, FileText, ClipboardList } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import './Quotes.css';
 
@@ -13,7 +14,7 @@ const Quotes = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/quotes', {
+            await axios.post(`${API_URL}/api/quotes`, {
                 ...formData,
                 user_id: user ? user.id : null
             });

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 import { ShoppingBag, Users, Package, DollarSign, TrendingUp, Clock } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const API = `${API_URL}/api`;
 
 const AdminDashboard = ({ token }) => {
     const [stats, setStats] = useState(null);

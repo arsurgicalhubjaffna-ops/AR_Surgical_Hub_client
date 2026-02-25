@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 
-const API = 'http://localhost:5000/api';
+const API = `${API_URL}/api`;
 const STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 
 const AdminOrders = ({ token }) => {

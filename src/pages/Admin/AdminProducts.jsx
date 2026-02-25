@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const API = `${API_URL}/api`;
 
 const emptyForm = { name: '', description: '', price: '', stock: '', category_id: '', image_url: '' };
 

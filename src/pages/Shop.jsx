@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../config/api';
 import { useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import './Shop.css';
@@ -16,8 +17,8 @@ const Shop = () => {
             try {
                 setLoading(true);
                 const url = categoryId
-                    ? `http://localhost:5000/api/products?category=${categoryId}`
-                    : 'http://localhost:5000/api/products';
+                    ? `${API_URL}/api/products?category=${categoryId}`
+                    : `${API_URL}/api/products`;
                 const res = await axios.get(url);
                 setProducts(res.data);
             } catch (err) {
