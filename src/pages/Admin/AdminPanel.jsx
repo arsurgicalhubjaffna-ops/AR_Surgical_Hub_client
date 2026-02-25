@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import AdminDashboard from './AdminDashboard';
 import AdminProducts from './AdminProducts';
+import AdminCategories from './AdminCategories';
 import AdminOrders from './AdminOrders';
 import AdminUsers from './AdminUsers';
 import './Admin.css';
@@ -11,6 +12,7 @@ import './Admin.css';
 const NAV_ITEMS = [
     { key: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
     { key: 'products', label: 'Products', Icon: Package },
+    { key: 'categories', label: 'Categories', Icon: ShoppingBag },
     { key: 'orders', label: 'Orders', Icon: ShoppingBag },
     { key: 'users', label: 'Users', Icon: Users },
 ];
@@ -18,6 +20,7 @@ const NAV_ITEMS = [
 const PAGE_TITLES = {
     dashboard: 'Dashboard',
     products: 'Product Management',
+    categories: 'Category Management',
     orders: 'Order Management',
     users: 'User Management',
 };
@@ -37,6 +40,7 @@ const AdminPanel = () => {
         switch (activePage) {
             case 'dashboard': return <AdminDashboard {...props} />;
             case 'products': return <AdminProducts {...props} />;
+            case 'categories': return <AdminCategories {...props} />;
             case 'orders': return <AdminOrders {...props} />;
             case 'users': return <AdminUsers {...props} />;
             default: return <AdminDashboard {...props} />;
