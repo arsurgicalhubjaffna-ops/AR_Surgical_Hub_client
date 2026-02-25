@@ -118,6 +118,11 @@
     display: none;
 }
 
+.menu-toggle {
+    display: none;
+    /* Hidden on desktop */
+}
+
 .nav-links a {
     color: var(--text-secondary);
     font-weight: 500;
@@ -189,13 +194,13 @@
 
 .mobile-logout-link {
     background: #fff;
-    border: 1px solid var(--green);
+    border: 1.5px solid var(--green);
     color: var(--green);
     font-size: 1rem;
     font-weight: 700;
     padding: 14px;
     width: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     text-align: center;
     margin-top: 30px;
@@ -205,11 +210,13 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    text-decoration: none;
 }
 
 .mobile-logout-link:hover {
-    background: var(--green);
-    color: #fff;
+    background: var(--green-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 /* Search */
@@ -292,6 +299,8 @@
     font-weight: 600;
     font-family: var(--font-primary);
     transition: all var(--transition);
+    display: none;
+    /* Hidden on desktop by default */
 }
 
 .toggle-btn:hover {
@@ -378,13 +387,19 @@
     }
 
     .mobile-drawer a {
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 600;
         width: 100%;
-        padding: 18px 0;
+        padding: 20px 0;
         border-bottom: 1px solid var(--border);
         color: var(--text-primary);
         display: block;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .mobile-drawer a:hover {
+        color: var(--green);
     }
 
     .nav-links a::after {
@@ -395,11 +410,15 @@
         display: flex !important;
     }
 
+    .header-action-btn:last-child {
+        display: none !important;
+        /* Hide hamburger on desktop */
+    }
+
     /* Standardized Premium Boxed Icons (Ultimate Polish) */
     .header-actions {
         gap: 8px;
         z-index: 2001;
-        /* Stay ABOVE the nav-links/drawer */
     }
 
     .header-action-btn {
@@ -416,6 +435,7 @@
         color: var(--text-secondary) !important;
         cursor: pointer;
         transition: all 0.2s ease !important;
+        text-decoration: none;
     }
 
     .header-action-btn:active {
