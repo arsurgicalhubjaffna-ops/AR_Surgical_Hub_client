@@ -45,22 +45,46 @@
     color: var(--text-primary);
 }
 
-.hero-text h1 span {
-    color: var(--green);
+/* ── Buttons ── */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary);
+    color: #ffffff !important;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1.5px solid var(--primary);
 }
 
-.hero-text p {
-    font-size: 1.02rem;
-    color: var(--text-secondary);
-    margin-bottom: 32px;
-    max-width: 440px;
-    line-height: 1.7;
+.btn-primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-green);
+    color: #fff !important;
 }
 
-.hero-btns {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    color: var(--primary) !important;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1.5px solid var(--primary);
+}
+
+.btn-secondary:hover {
+    background: var(--green-light);
+    transform: translateY(-2px);
+    color: var(--primary) !important;
 }
 
 /* ── Hero visual ── */

@@ -80,6 +80,20 @@ video {
   display: block;
 }
 
+/* ── Global Layout ── */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   overflow-x: hidden !important;
