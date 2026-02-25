@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config/api';
 import ProductCard from '../components/ProductCard';
 import './Home.css';
 
@@ -41,7 +42,7 @@ const Home = () => {
     useEffect(() => {
         const load = async () => {
             try {
-                const { data } = await axios.get('/api/products?limit=8');
+                const { data } = await axios.get(`${API_URL}/api/products?limit=8`);
                 const products = data.products || data || [];
                 setFeatured(products.slice(0, 4));
                 setLatest(products.slice(0, 6));
