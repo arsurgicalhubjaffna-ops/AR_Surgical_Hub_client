@@ -8,6 +8,7 @@
     background: linear-gradient(135deg, #e8f8f6 0%, #d4f0ec 60%, #e0f5f2 100%);
     padding: 72px 0 60px;
     overflow: hidden;
+    overflow-x: hidden;
 }
 
 .hero-inner {
