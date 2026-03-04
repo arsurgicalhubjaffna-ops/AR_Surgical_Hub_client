@@ -1,11 +1,10 @@
-/* index.css — minimal reset; all styles live in theme.css */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+@import "tailwindcss";
 
-body {
-  margin: 0;
-  padding: 0;
+@theme {
+  --color-brand-green: #00B5A4;
+  --color-brand-green-dark: #008f81;
+  --color-brand-blue: #3597C7;
+
+  --font-header: "Plus Jakarta Sans", sans-serif;
+  --font-primary: "DM Sans", sans-serif;
 }

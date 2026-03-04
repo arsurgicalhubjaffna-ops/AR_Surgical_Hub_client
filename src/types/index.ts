@@ -1,0 +1,58 @@
+export interface User {
+    id: string;
+    email: string;
+    full_name: string;
+    phone?: string;
+    role: 'admin' | 'customer';
+    is_active?: boolean;
+}
+
+export interface Category {
+    id: string;
+    name: string;
+    description?: string;
+    image_url?: string;
+}
+
+export interface Product {
+    id: string;
+    category_id: string;
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    image_url: string;
+    is_active: boolean;
+    categories?: {
+        name: string;
+    };
+}
+
+export interface Review {
+    id: string;
+    product_id: string;
+    user_id: string;
+    rating: number;
+    comment: string;
+    created_at: string;
+    users?: {
+        full_name: string;
+    };
+}
+
+export interface CartItem extends Product {
+    quantity: number;
+}
+
+export interface Order {
+    id: string;
+    user_id: string;
+    total_amount: number;
+    status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+    payment_status: 'pending' | 'paid' | 'failed';
+    created_at: string;
+    users?: {
+        full_name: string;
+        email: string;
+    };
+}
