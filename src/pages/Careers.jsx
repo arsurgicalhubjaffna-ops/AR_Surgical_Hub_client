@@ -10,7 +10,7 @@ const Careers = () => {
     useEffect(() => {
         const fetchVacancies = async () => {
             try {
-                const { data, error } = await insforge.db
+                const { data, error } = await insforge.database
                     .from('vacancies')
                     .select('*')
                     .eq('is_active', true)

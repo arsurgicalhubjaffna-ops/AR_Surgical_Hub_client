@@ -10,7 +10,7 @@ const Categories = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const { data, error } = await insforge.db
+                const { data, error } = await insforge.database
                     .from('categories')
                     .select('*')
                     .order('name', { ascending: true });

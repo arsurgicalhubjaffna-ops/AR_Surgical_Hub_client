@@ -9,7 +9,7 @@ const AdminOrders = () => {
 
     const load = async () => {
         try {
-            const { data, error } = await insforge.db
+            const { data, error } = await insforge.database
                 .from('orders')
                 .select('*, users(full_name, email)')
                 .order('created_at', { ascending: false });
@@ -31,7 +31,7 @@ const AdminOrders = () => {
 
     const updateStatus = async (id, status) => {
         try {
-            const { error } = await insforge.db
+            const { error } = await insforge.database
                 .from('orders')
                 .update({ status })
                 .eq('id', id);

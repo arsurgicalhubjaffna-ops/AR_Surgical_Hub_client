@@ -41,7 +41,7 @@ const Home = () => {
     useEffect(() => {
         const load = async () => {
             try {
-                const { data, error } = await insforge.db
+                const { data, error } = await insforge.database
                     .from('products')
                     .select('*, categories(name)')
                     .eq('is_active', true)

@@ -23,8 +23,8 @@ const ProductDetail = () => {
     const fetchDetails = async () => {
         try {
             const [productRes, reviewsRes] = await Promise.all([
-                insforge.db.from('products').select('*, categories(name)').eq('id', id).single(),
-                insforge.db.from('product_reviews').select('*, users(full_name)').eq('product_id', id).order('created_at', { ascending: false })
+                insforge.database.from('products').select('*, categories(name)').eq('id', id).single(),
+                insforge.database.from('product_reviews').select('*, users(full_name)').eq('product_id', id).order('created_at', { ascending: false })
             ]);
 
             if (productRes.data) {
@@ -59,7 +59,7 @@ const ProductDetail = () => {
         }
         setReviewLoading(true);
         try {
-            const { error } = await insforge.db.from('product_reviews').insert([{
+            const { error } = await insforge.database.from('product_reviews').insert([{
                 product_id: id,
                 user_id: user.id,
                 rating: newReviewRating,

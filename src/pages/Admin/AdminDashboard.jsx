@@ -12,9 +12,9 @@ const AdminDashboard = () => {
             try {
                 // Fetch counts in parallel
                 const [productsRes, usersRes, ordersRes] = await Promise.all([
-                    insforge.db.from('products').select('id', { count: 'exact', head: true }),
-                    insforge.db.from('users').select('id', { count: 'exact', head: true }),
-                    insforge.db.from('orders').select('id, total_amount, payment_status'),
+                    insforge.database.from('products').select('id', { count: 'exact', head: true }),
+                    insforge.database.from('users').select('id', { count: 'exact', head: true }),
+                    insforge.database.from('orders').select('id, total_amount, payment_status'),
                 ]);
 
                 const totalOrders = ordersRes.data?.length || 0;
@@ -30,7 +30,7 @@ const AdminDashboard = () => {
                 });
 
                 // Fetch recent orders with user info
-                const { data: recentOrders } = await insforge.db
+                const { data: recentOrders } = await insforge.database
                     .from('orders')
                     .select('*, users(full_name, email)')
                     .order('created_at', { ascending: false })

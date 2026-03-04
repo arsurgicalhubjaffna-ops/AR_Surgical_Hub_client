@@ -8,7 +8,7 @@ const AdminUsers = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const { data, error } = await insforge.db
+                const { data, error } = await insforge.database
                     .from('users')
                     .select('*')
                     .order('created_at', { ascending: false });

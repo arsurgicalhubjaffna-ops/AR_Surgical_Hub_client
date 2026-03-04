@@ -13,7 +13,7 @@ const Quotes = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { error } = await insforge.db.from('quotes').insert([{
+            const { error } = await insforge.database.from('quotes').insert([{
                 message: formData.message,
                 user_id: user ? user.id : null,
                 status: 'new',

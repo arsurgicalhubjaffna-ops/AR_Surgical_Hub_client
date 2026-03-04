@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     const buildUser = async (authUser) => {
         if (!authUser) return null;
         try {
-            const { data: profile } = await insforge.db
+            const { data: profile } = await insforge.database
                 .from('users')
                 .select('*')
                 .eq('id', authUser.id)
@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }) => {
         // If auto-signed in (no email verification), insert into our users table
         if (data?.user) {
             try {
-                await insforge.db.from('users').insert([{
+                await insforge.database.from('users').insert([{
                     id: data.user.id,
                     full_name: userData.full_name,
                     email: userData.email,
@@ -136,7 +136,7 @@ export const AuthProvider = ({ children }) => {
         // After verification, insert user into our users table
         if (data?.user) {
             try {
-                await insforge.db.from('users').insert([{
+                await insforge.database.from('users').insert([{
                     id: data.user.id,
                     full_name: userData?.full_name || data.user.profile?.name || '',
                     email: data.user.email,

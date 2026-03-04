@@ -15,8 +15,8 @@ const AdminProducts = () => {
     const load = async () => {
         try {
             const [productsRes, categoriesRes] = await Promise.all([
-                insforge.db.from('products').select('*, categories(name)').order('created_at', { ascending: false }),
-                insforge.db.from('categories').select('*').order('name', { ascending: true }),
+                insforge.database.from('products').select('*, categories(name)').order('created_at', { ascending: false }),
+                insforge.database.from('categories').select('*').order('name', { ascending: true }),
             ]);
             const mapped = (productsRes.data || []).map(p => ({
                 ...p,
@@ -53,13 +53,13 @@ const AdminProducts = () => {
             };
 
             if (editId) {
-                const { error } = await insforge.db
+                const { error } = await insforge.database
                     .from('products')
                     .update(payload)
                     .eq('id', editId);
                 if (error) throw error;
             } else {
-                const { error } = await insforge.db
+                const { error } = await insforge.database
                     .from('products')
                     .insert([payload]);
                 if (error) throw error;
@@ -73,7 +73,7 @@ const AdminProducts = () => {
 
     const del = async (id) => {
         if (!confirm('Delete this product?')) return;
-        const { error } = await insforge.db.from('products').delete().eq('id', id);
+        const { error } = await insforge.database.from('products').delete().eq('id', id);
         if (error) { alert('Failed to delete product'); return; }
         load();
     };

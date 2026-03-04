@@ -15,7 +15,7 @@ const Shop = () => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                let query = insforge.db
+                let query = insforge.database
                     .from('products')
                     .select('*, categories(name)')
                     .eq('is_active', true)

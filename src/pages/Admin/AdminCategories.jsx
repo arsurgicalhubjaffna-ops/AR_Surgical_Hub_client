@@ -13,7 +13,7 @@ const AdminCategories = () => {
 
     const load = async () => {
         try {
-            const { data, error } = await insforge.db
+            const { data, error } = await insforge.database
                 .from('categories')
                 .select('*')
                 .order('name', { ascending: true });
@@ -44,13 +44,13 @@ const AdminCategories = () => {
             };
 
             if (editId) {
-                const { error } = await insforge.db
+                const { error } = await insforge.database
                     .from('categories')
                     .update(payload)
                     .eq('id', editId);
                 if (error) throw error;
             } else {
-                const { error } = await insforge.db
+                const { error } = await insforge.database
                     .from('categories')
                     .insert([payload]);
                 if (error) throw error;
@@ -65,7 +65,7 @@ const AdminCategories = () => {
     const del = async (id) => {
         if (!confirm('Delete this category? Products in this category might become unlinked.')) return;
         try {
-            const { error } = await insforge.db.from('categories').delete().eq('id', id);
+            const { error } = await insforge.database.from('categories').delete().eq('id', id);
             if (error) throw error;
             load();
         } catch (err) {

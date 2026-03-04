@@ -107,6 +107,21 @@ const Login = () => {
     return (
         <div className="login-container container">
             <div className="login-card bg-glass">
+                <div className="login-tabs">
+                    <button
+                        className={`login-tab ${isLogin ? 'active' : ''}`}
+                        onClick={() => setIsLogin(true)}
+                    >
+                        Sign In
+                    </button>
+                    <button
+                        className={`login-tab ${!isLogin ? 'active' : ''}`}
+                        onClick={() => setIsLogin(false)}
+                    >
+                        Sign Up
+                    </button>
+                </div>
+
                 <div className="login-header">
                     <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
                     <p>{isLogin ? 'Login to manage your orders' : 'Join AR Surgical Hub today'}</p>

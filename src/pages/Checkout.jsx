@@ -22,7 +22,7 @@ const Checkout = () => {
 
         try {
             // Create order
-            const { data: order, error: orderError } = await insforge.db
+            const { data: order, error: orderError } = await insforge.database
                 .from('orders')
                 .insert([{
                     user_id: user.id,
@@ -45,7 +45,7 @@ const Checkout = () => {
                 price: item.price
             }));
 
-            const { error: itemsError } = await insforge.db
+            const { error: itemsError } = await insforge.database
                 .from('order_items')
                 .insert(orderItems);
 
