@@ -73,6 +73,9 @@ const Header = () => {
                             <Link to="/categories">Categories</Link>
                             <Link to="/careers">Careers</Link>
                             <Link to="/quotes">Get a Quote</Link>
+                            {user?.role === 'admin' && (
+                                <Link to="/admin" style={{ color: 'var(--green)', fontWeight: 'bold' }}>Admin Dashboard</Link>
+                            )}
                         </div>
 
                         <div className="header-actions">
@@ -110,6 +113,9 @@ const Header = () => {
                 <Link to="/categories" onClick={closeMenu}>Categories</Link>
                 <Link to="/careers" onClick={closeMenu}>Careers</Link>
                 <Link to="/quotes" onClick={closeMenu}>Get a Quote</Link>
+                {user?.role === 'admin' && (
+                    <Link to="/admin" onClick={closeMenu} style={{ color: 'var(--green)', fontWeight: 'bold' }}>Admin Dashboard</Link>
+                )}
                 <div className="mobile-user-links">
                     {user ? (
                         <button onClick={() => { logout(); closeMenu(); }} className="mobile-logout-link">

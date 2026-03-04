@@ -12,22 +12,42 @@ export const AuthProvider = ({ children }) => {
     const buildUser = async (authUser) => {
         if (!authUser) return null;
         try {
-            const { data: profile } = await insforge.database
+            // 1. Try finding by Auth ID (Primary)
+            let { data: profile } = await insforge.database
                 .from('users')
                 .select('*')
                 .eq('id', authUser.id)
                 .single();
+
+            // 2. Fallback: Try finding by Email (handles ID mismatches during migration)
+            if (!profile && authUser.email) {
+                const { data: emailProfile } = await insforge.database
+                    .from('users')
+                    .select('*')
+                    .eq('email', authUser.email)
+                    .single();
+
+                if (emailProfile) {
+                    console.log('Synchronizing Auth ID for:', authUser.email);
+                    // Update the row with the new Auth ID so it works by ID next time
+                    await insforge.database
+                        .from('users')
+                        .update({ id: authUser.id })
+                        .eq('email', authUser.email);
+                    profile = { ...emailProfile, id: authUser.id };
+                }
+            }
+
             if (profile) {
                 return { ...profile, email: authUser.email };
             }
         } catch (e) {
-            // profile not found — use auth data
-            console.log('Profile not found in users table, using auth data');
+            console.log('Profile lookup failed:', e.message);
         }
         return {
             id: authUser.id,
             email: authUser.email,
-            full_name: authUser.profile?.name || '',
+            full_name: authUser.profile?.name || 'Customer',
             role: 'customer',
         };
     };
