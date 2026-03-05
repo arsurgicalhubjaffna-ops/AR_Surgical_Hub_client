@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import insforge from '../lib/insforge';
 import ProductCard from '../components/ProductCard';
-import { Product, Category } from '../types';
+import { Product, Category, Subcategory } from '../types';
 
 const Shop: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const categoryId = queryParams.get('category');
+    const subcategoryId = queryParams.get('subcategory');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,14 +26,29 @@ const Shop: React.FC = () => {
                     .order('name', { ascending: true });
                 setCategories(catData || []);
 
+                // Fetch subcategories if a category is selected
+                if (categoryId) {
+                    const { data: subData } = await insforge.database
+                        .from('subcategories')
+                        .select('*')
+                        .eq('category_id', categoryId)
+                        .order('name', { ascending: true });
+                    setSubcategories(subData || []);
+                } else {
+                    setSubcategories([]);
+                }
+
                 let query = insforge.database
                     .from('products')
-                    .select('*, categories(name)')
+                    .select('*, categories(name), subcategories(name)')
                     .eq('is_active', true)
                     .order('created_at', { ascending: false });
 
                 if (categoryId) {
                     query = query.eq('category_id', categoryId);
+                }
+                if (subcategoryId) {
+                    query = query.eq('subcategory_id', subcategoryId);
                 }
 
                 const { data, error } = await query;
@@ -41,6 +58,7 @@ const Shop: React.FC = () => {
                 const mapped = (data || []).map((p: any) => ({
                     ...p,
                     category_name: p.categories?.name || null,
+                    subcategory_name: p.subcategories?.name || null,
                 })) as Product[];
 
                 setProducts(mapped);
@@ -51,7 +69,7 @@ const Shop: React.FC = () => {
             }
         };
         fetchData();
-    }, [categoryId]);
+    }, [categoryId, subcategoryId]);
 
     return (
         <div className="min-h-screen bg-brand-bg pb-20">
@@ -88,10 +106,24 @@ const Shop: React.FC = () => {
                                 <li key={cat.id}>
                                     <Link
                                         to={`/shop?category=${cat.id}`}
-                                        className={`block px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent no-underline ${categoryId === cat.id ? 'bg-brand-green-light text-brand-green border-brand-green/25 font-600' : 'text-secondary hover:bg-brand-bg hover:text-brand-text'}`}
+                                        className={`block px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent no-underline ${categoryId === cat.id && !subcategoryId ? 'bg-brand-green-light text-brand-green border-brand-green/25 font-600' : 'text-secondary hover:bg-brand-bg hover:text-brand-text'} ${categoryId === cat.id && subcategoryId ? 'text-brand-green font-600' : ''}`}
                                     >
                                         {cat.name}
                                     </Link>
+                                    {categoryId === cat.id && subcategories.length > 0 && (
+                                        <ul className="ml-4 mt-1 flex flex-col gap-1 list-none p-0 border-l-2 border-brand-green/20 pl-2">
+                                            {subcategories.map(sub => (
+                                                <li key={sub.id}>
+                                                    <Link
+                                                        to={`/shop?category=${cat.id}&subcategory=${sub.id}`}
+                                                        className={`block px-3 py-1.5 rounded-lg text-[0.8rem] transition-all duration-200 no-underline ${subcategoryId === sub.id ? 'text-brand-green font-700 bg-brand-green/5' : 'text-gray-400 hover:text-brand-text'}`}
+                                                    >
+                                                        ↳ {sub.name}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -99,22 +131,45 @@ const Shop: React.FC = () => {
 
                     {/* Mobile Horizontal scroll for categories */}
                     <div className="lg:hidden mb-6 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-none">
-                        <div className="flex gap-2.5">
-                            <Link
-                                to="/shop"
-                                className={`shrink-0 px-5 py-2.5 rounded-xl text-sm whitespace-nowrap border no-underline transition-all ${!categoryId ? 'bg-brand-green text-white border-brand-green font-700 shadow-lg shadow-brand-green/20' : 'bg-brand-surface border-brand-border text-brand-text-muted'}`}
-                            >
-                                All Products
-                            </Link>
-                            {categories.map((cat) => (
+                        <div className="flex flex-col gap-3">
+                            <div className="flex gap-2.5">
                                 <Link
-                                    key={cat.id}
-                                    to={`/shop?category=${cat.id}`}
-                                    className={`shrink-0 px-4 py-2 rounded-lg text-sm whitespace-nowrap border no-underline transition-all ${categoryId === cat.id ? 'bg-brand-green text-white border-brand-green font-600 shadow-md shadow-brand-green/20' : 'bg-white border-black/8 text-secondary'}`}
+                                    to="/shop"
+                                    className={`shrink-0 px-5 py-2.5 rounded-xl text-sm whitespace-nowrap border no-underline transition-all ${!categoryId ? 'bg-brand-green text-white border-brand-green font-700 shadow-lg shadow-brand-green/20' : 'bg-brand-surface border-brand-border text-brand-text-muted'}`}
                                 >
-                                    {cat.name}
+                                    All Products
                                 </Link>
-                            ))}
+                                {categories.map((cat) => (
+                                    <Link
+                                        key={cat.id}
+                                        to={`/shop?category=${cat.id}`}
+                                        className={`shrink-0 px-4 py-2 rounded-lg text-sm whitespace-nowrap border no-underline transition-all ${categoryId === cat.id ? 'bg-brand-green text-white border-brand-green font-600 shadow-md shadow-brand-green/20' : 'bg-white border-black/8 text-secondary'}`}
+                                    >
+                                        {cat.name}
+                                    </Link>
+                                ))}
+                            </div>
+
+                            {/* Subcategories mobile scroll */}
+                            {categoryId && subcategories.length > 0 && (
+                                <div className="flex gap-2.5 border-t border-brand-border pt-3">
+                                    <Link
+                                        to={`/shop?category=${categoryId}`}
+                                        className={`shrink-0 px-4 py-1.5 rounded-lg text-[0.8rem] whitespace-nowrap border no-underline transition-all ${!subcategoryId ? 'bg-brand-green/10 text-brand-green border-brand-green/20 font-700' : 'bg-transparent border-transparent text-gray-400'}`}
+                                    >
+                                        All in {categories.find(c => c.id === categoryId)?.name || 'Category'}
+                                    </Link>
+                                    {subcategories.map((sub) => (
+                                        <Link
+                                            key={sub.id}
+                                            to={`/shop?category=${categoryId}&subcategory=${sub.id}`}
+                                            className={`shrink-0 px-4 py-1.5 rounded-lg text-[0.8rem] whitespace-nowrap border no-underline transition-all ${subcategoryId === sub.id ? 'bg-brand-green/10 text-brand-green border-brand-green/20 font-700' : 'bg-white border-black/8 text-secondary'}`}
+                                        >
+                                            {sub.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -124,6 +179,9 @@ const Shop: React.FC = () => {
                             Showing <span className="text-brand-text font-600">{products.length}</span> results
                             {categoryId && categories.find(c => c.id === categoryId) && (
                                 <> in <span className="text-brand-green font-600">{categories.find(c => c.id === categoryId)?.name}</span></>
+                            )}
+                            {subcategoryId && subcategories.find(s => s.id === subcategoryId) && (
+                                <> › <span className="text-brand-green font-600">{subcategories.find(s => s.id === subcategoryId)?.name}</span></>
                             )}
                         </div>
 

@@ -14,9 +14,20 @@ export interface Category {
     image_url?: string;
 }
 
+export interface Subcategory {
+    id: string;
+    category_id: string;
+    name: string;
+    description?: string;
+    categories?: {
+        name: string;
+    };
+}
+
 export interface Product {
     id: string;
     category_id: string;
+    subcategory_id?: string;
     name: string;
     description: string;
     price: number;
@@ -24,6 +35,9 @@ export interface Product {
     image_url: string;
     is_active: boolean;
     categories?: {
+        name: string;
+    };
+    subcategories?: {
         name: string;
     };
 }

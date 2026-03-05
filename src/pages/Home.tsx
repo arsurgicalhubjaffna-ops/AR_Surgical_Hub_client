@@ -6,6 +6,7 @@ import {
 import { Link } from 'react-router-dom';
 import insforge from '../lib/insforge';
 import ProductCard from '../components/ProductCard';
+import ProductImage from '../components/ProductImage';
 import { Product } from '../types';
 
 /* ── Trust bar data ── */
@@ -262,11 +263,13 @@ const Home: React.FC = () => {
                             <p className="text-secondary text-[0.97rem] mb-6.5 max-w-[400px] mx-auto md:mx-0">Premium N95, KN95 and surgical masks — bulk pricing available for healthcare facilities.</p>
                             <Link to="/shop" className="inline-flex items-center gap-2 bg-brand-green text-white px-7 py-3.5 rounded-xl font-600 no-underline transition-all duration-200 border-1.5 border-brand-green hover:bg-brand-green-dark hover:-translate-y-0.5 shadow-sm">Shop Now <ArrowRight size={16} /></Link>
                         </div>
-                        <img
-                            src="https://images.unsplash.com/photo-1584889341755-bab37c0c2d44?w=500&auto=format&fit=crop"
-                            alt="Safety Masks"
-                            className="w-full max-w-[340px] shrink-0 rounded-2xl object-cover aspect-[4/3] shadow-lg"
-                        />
+                        <div className="w-full max-w-[340px] shrink-0 rounded-2xl overflow-hidden aspect-[4/3] shadow-lg">
+                            <ProductImage
+                                src="https://images.unsplash.com/photo-1584889341755-bab37c0c2d44?w=500&auto=format&fit=crop"
+                                alt="Safety Masks"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </div>
                 </div>
             </section>

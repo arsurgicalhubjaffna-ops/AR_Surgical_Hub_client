@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import insforge from '../../lib/insforge';
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search, Filter } from 'lucide-react';
-import { Product, Category } from '../../types';
+import { Product, Category, Subcategory } from '../../types';
 import ProductImage from '../../components/ProductImage';
 
-const emptyForm = { name: '', description: '', price: '', stock: '', category_id: '', image_url: '' };
+const emptyForm = { name: '', description: '', price: '', stock: '', category_id: '', subcategory_id: '', image_url: '' };
 
 const AdminProducts: React.FC = () => {
-    const [products, setProducts] = useState<(Product & { category_name?: string | null })[]>([]);
+    const [products, setProducts] = useState<(Product & { category_name?: string | null, subcategory_name?: string | null })[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [modal, setModal] = useState(false);
     const [form, setForm] = useState(emptyForm);
@@ -17,16 +18,19 @@ const AdminProducts: React.FC = () => {
 
     const load = async () => {
         try {
-            const [productsRes, categoriesRes] = await Promise.all([
-                insforge.database.from('products').select('*, categories(name)').order('created_at', { ascending: false }),
+            const [productsRes, categoriesRes, subcategoriesRes] = await Promise.all([
+                insforge.database.from('products').select('*, categories(name), subcategories(name)').order('created_at', { ascending: false }),
                 insforge.database.from('categories').select('*').order('name', { ascending: true }),
+                insforge.database.from('subcategories').select('*').order('name', { ascending: true }),
             ]);
             const mapped = (productsRes.data || []).map((p: any) => ({
                 ...p,
                 category_name: p.categories?.name || null,
+                subcategory_name: p.subcategories?.name || null,
             }));
             setProducts(mapped);
             setCategories(categoriesRes.data || []);
+            setSubcategories(subcategoriesRes.data || []);
         } catch (err) {
             console.error('Load Error:', err);
         } finally {
@@ -44,6 +48,7 @@ const AdminProducts: React.FC = () => {
             price: String(p.price),
             stock: String(p.stock),
             category_id: p.category_id || '',
+            subcategory_id: p.subcategory_id || '',
             image_url: p.image_url || ''
         });
         setEditId(p.id);
@@ -58,6 +63,7 @@ const AdminProducts: React.FC = () => {
                 price: Number(form.price),
                 stock: Number(form.stock),
                 category_id: form.category_id || null,
+                subcategory_id: form.subcategory_id || null,
                 image_url: form.image_url || null,
                 is_active: true,
             };
@@ -90,7 +96,8 @@ const AdminProducts: React.FC = () => {
 
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.category_name?.toLowerCase().includes(searchTerm.toLowerCase())
+        p.category_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.subcategory_name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (loading) return <div className="text-secondary italic animate-pulse">Loading procurement catalog...</div>;
@@ -149,9 +156,16 @@ const AdminProducts: React.FC = () => {
                                         <p className="text-[0.75rem] text-gray-400 line-clamp-1">{p.description}</p>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="inline-block bg-brand-bg px-2.5 py-1 rounded-md text-[0.75rem] font-700 text-brand-text-muted border border-brand-border">
-                                            {p.category_name || 'Standard'}
-                                        </span>
+                                        <div className="flex flex-col gap-1 items-start">
+                                            <span className="inline-block bg-brand-bg px-2.5 py-1 rounded-md text-[0.75rem] font-700 text-brand-text-muted border border-brand-border">
+                                                {p.category_name || 'Standard'}
+                                            </span>
+                                            {p.subcategory_name && (
+                                                <span className="inline-block bg-brand-green/10 text-brand-green px-2.5 py-0.5 rounded-md text-[0.65rem] font-800 uppercase tracking-widest ml-1 border border-brand-green/20">
+                                                    ↳ {p.subcategory_name}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 font-800 text-brand-green text-sm">Rs. {Number(p.price).toFixed(2)}</td>
                                     <td className="px-6 py-4">
@@ -246,15 +260,27 @@ const AdminProducts: React.FC = () => {
                                     onChange={e => setForm({ ...form, stock: e.target.value })}
                                 />
                             </div>
-                            <div className="sm:col-span-2">
-                                <label className="block text-xs font-800 text-brand-text-muted uppercase tracking-widest mb-2">Classification / Category</label>
+                            <div className="sm:col-span-1">
+                                <label className="block text-xs font-800 text-brand-text-muted uppercase tracking-widest mb-2">Classification</label>
                                 <select
                                     className="w-full bg-brand-bg border border-brand-border rounded-xl px-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none"
                                     value={form.category_id}
-                                    onChange={e => setForm({ ...form, category_id: e.target.value })}
+                                    onChange={e => setForm({ ...form, category_id: e.target.value, subcategory_id: '' })}
                                 >
                                     <option value="">Unclassified</option>
                                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="sm:col-span-1">
+                                <label className="block text-xs font-800 text-brand-text-muted uppercase tracking-widest mb-2">Sub-Class</label>
+                                <select
+                                    className="w-full bg-brand-bg border border-brand-border rounded-xl px-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none disabled:opacity-50"
+                                    value={form.subcategory_id}
+                                    onChange={e => setForm({ ...form, subcategory_id: e.target.value })}
+                                    disabled={!form.category_id}
+                                >
+                                    <option value="">None</option>
+                                    {subcategories.filter(s => s.category_id === form.category_id).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                                 </select>
                             </div>
                             <div className="sm:col-span-2">

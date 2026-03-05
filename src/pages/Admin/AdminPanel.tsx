@@ -8,16 +8,18 @@ import { useAuth } from '../../context/AuthContext';
 import AdminDashboard from './AdminDashboard';
 import AdminProducts from './AdminProducts';
 import AdminCategories from './AdminCategories';
+import AdminSubcategories from './AdminSubcategories';
 import AdminOrders from './AdminOrders';
 import AdminUsers from './AdminUsers';
 import AdminQuotes from './AdminQuotes';
 
-type AdminPage = 'dashboard' | 'products' | 'categories' | 'orders' | 'users' | 'quotes';
+type AdminPage = 'dashboard' | 'products' | 'categories' | 'subcategories' | 'orders' | 'users' | 'quotes';
 
 const NAV_ITEMS: { key: AdminPage; label: string; Icon: any }[] = [
     { key: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
     { key: 'products', label: 'Products', Icon: Package },
-    { key: 'categories', label: 'Categories', Icon: ShoppingBag },
+    { key: 'categories', label: 'Classifications', Icon: ShoppingBag },
+    { key: 'subcategories', label: 'Sub-Classes', Icon: ShoppingBag },
     { key: 'orders', label: 'Orders', Icon: ClipboardList },
     { key: 'users', label: 'Users', Icon: Users },
     { key: 'quotes', label: 'Quote Requests', Icon: MessageSquare },
@@ -39,6 +41,7 @@ const AdminPanel: React.FC = () => {
             case 'dashboard': return <AdminDashboard />;
             case 'products': return <AdminProducts />;
             case 'categories': return <AdminCategories />;
+            case 'subcategories': return <AdminSubcategories />;
             case 'orders': return <AdminOrders />;
             case 'users': return <AdminUsers />;
             case 'quotes': return <AdminQuotes />;
