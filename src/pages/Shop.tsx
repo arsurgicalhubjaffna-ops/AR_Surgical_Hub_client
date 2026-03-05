@@ -13,6 +13,7 @@ const Shop: React.FC = () => {
     const queryParams = new URLSearchParams(location.search);
     const categoryId = queryParams.get('category');
     const subcategoryId = queryParams.get('subcategory');
+    const [sortBy, setSortBy] = useState('latest'); // latest, price_asc, price_desc, stock
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,6 +52,17 @@ const Shop: React.FC = () => {
                     query = query.eq('subcategory_id', subcategoryId);
                 }
 
+                // Apply dynamic sorting
+                if (sortBy === 'price_asc') {
+                    query = query.order('price', { ascending: true });
+                } else if (sortBy === 'price_desc') {
+                    query = query.order('price', { ascending: false });
+                } else if (sortBy === 'stock') {
+                    query = query.order('stock', { ascending: false });
+                } else {
+                    query = query.order('created_at', { ascending: false });
+                }
+
                 const { data, error } = await query;
                 if (error) throw error;
 
@@ -69,7 +81,7 @@ const Shop: React.FC = () => {
             }
         };
         fetchData();
-    }, [categoryId, subcategoryId]);
+    }, [categoryId, subcategoryId, sortBy]);
 
     return (
         <div className="min-h-screen bg-brand-bg pb-20">
@@ -181,14 +193,30 @@ const Shop: React.FC = () => {
 
                     {/* Main Content */}
                     <main className="flex-1">
-                        <div className="text-[0.84rem] text-gray-400 mb-6 px-1">
-                            Showing <span className="text-brand-text font-600">{products.length}</span> results
-                            {categoryId && categories.find(c => c.id === categoryId) && (
-                                <> in <span className="text-brand-green font-600">{categories.find(c => c.id === categoryId)?.name}</span></>
-                            )}
-                            {subcategoryId && subcategories.find(s => s.id === subcategoryId) && (
-                                <> › <span className="text-brand-green font-600">{subcategories.find(s => s.id === subcategoryId)?.name}</span></>
-                            )}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 px-1">
+                            <div className="text-[0.84rem] text-gray-400">
+                                Showing <span className="text-brand-text font-600">{products.length}</span> results
+                                {categoryId && categories.find(c => c.id === categoryId) && (
+                                    <> in <span className="text-brand-green font-600">{categories.find(c => c.id === categoryId)?.name}</span></>
+                                )}
+                                {subcategoryId && subcategories.find(s => s.id === subcategoryId) && (
+                                    <> › <span className="text-brand-green font-600">{subcategories.find(s => s.id === subcategoryId)?.name}</span></>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-3 w-full sm:w-auto">
+                                <span className="text-[0.7rem] font-800 uppercase tracking-widest text-brand-text-muted whitespace-nowrap">Sort By:</span>
+                                <select
+                                    className="bg-white border border-brand-border rounded-xl px-4 py-2.5 text-sm font-600 text-brand-text outline-none focus:border-brand-green transition-all shadow-sm flex-1 sm:flex-none min-w-[160px]"
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                >
+                                    <option value="latest">Latest Arrivals</option>
+                                    <option value="price_asc">Price: Low to High</option>
+                                    <option value="price_desc">Price: High to Low</option>
+                                    <option value="stock">Stock Inventory</option>
+                                </select>
+                            </div>
                         </div>
 
                         {loading ? (
