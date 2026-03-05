@@ -106,7 +106,7 @@ const ProductDetail: React.FC = () => {
                             {product.name}
                         </h1>
                         <p className="text-2xl md:text-3xl font-800 text-brand-green tracking-tight font-header mb-6">
-                            ${typeof product.price === 'number' ? product.price.toFixed(2) : parseFloat(product.price).toFixed(2)}
+                            Rs. {typeof product.price === 'number' ? product.price.toFixed(2) : parseFloat(product.price).toFixed(2)}
                         </p>
                         <p className="text-secondary text-base md:text-[1.1rem] leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">
                             {product.description}

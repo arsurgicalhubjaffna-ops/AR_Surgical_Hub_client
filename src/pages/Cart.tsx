@@ -47,7 +47,7 @@ const Cart: React.FC = () => {
                                     />
                                     <div className="flex-1 text-center sm:text-left">
                                         <h3 className="text-lg font-700 text-brand-text mb-1 leading-tight">{item.name}</h3>
-                                        <p className="text-brand-green font-700 font-header">${typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price).toFixed(2)}</p>
+                                        <p className="text-brand-green font-700 font-header">Rs. {typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price).toFixed(2)}</p>
                                     </div>
                                     <div className="flex items-center gap-8 md:gap-12">
                                         <div className="text-center">
@@ -56,7 +56,7 @@ const Cart: React.FC = () => {
                                         </div>
                                         <div className="text-center sm:text-right min-w-[80px]">
                                             <span className="block text-[0.7rem] uppercase font-700 text-gray-400 mb-1">Subtotal</span>
-                                            <span className="text-brand-green font-800 font-header text-lg">${(item.price * item.quantity).toFixed(2)}</span>
+                                            <span className="text-brand-green font-800 font-header text-lg">Rs. {(item.price * item.quantity).toFixed(2)}</span>
                                         </div>
                                         <button
                                             onClick={() => removeFromCart(item.id)}
@@ -90,7 +90,7 @@ const Cart: React.FC = () => {
                         <div className="flex flex-col gap-4 mb-8">
                             <div className="flex justify-between text-secondary font-500">
                                 <span>Subtotal</span>
-                                <span className="text-brand-text font-700 font-header">${cartTotal.toFixed(2)}</span>
+                                <span className="text-brand-text font-700 font-header">Rs. {cartTotal.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-secondary font-500">
                                 <span>Shipping</span>
@@ -99,7 +99,7 @@ const Cart: React.FC = () => {
                             <div className="h-px bg-black/8 my-2"></div>
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-800 text-brand-text">Total</span>
-                                <span className="text-2xl font-800 text-brand-green font-header">${cartTotal.toFixed(2)}</span>
+                                <span className="text-2xl font-800 text-brand-green font-header">Rs. {cartTotal.toFixed(2)}</span>
                             </div>
                         </div>
 

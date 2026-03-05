@@ -151,7 +151,7 @@ const AdminProducts: React.FC = () => {
                                             {p.category_name || 'Standard'}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 font-800 text-brand-green text-sm">${Number(p.price).toFixed(2)}</td>
+                                    <td className="px-6 py-4 font-800 text-brand-green text-sm">Rs. {Number(p.price).toFixed(2)}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
                                             <div className="flex-1 max-w-[60px] h-1.5 bg-brand-bg rounded-full overflow-hidden">
@@ -227,7 +227,7 @@ const AdminProducts: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-800 text-brand-text-muted uppercase tracking-widest mb-2">Unit Price ($)</label>
+                                <label className="block text-xs font-800 text-brand-text-muted uppercase tracking-widest mb-2">Unit Price (Rs.)</label>
                                 <input
                                     type="number"
                                     className="w-full bg-brand-bg border border-brand-border rounded-xl px-4 py-3 outline-none focus:border-brand-green font-800 text-brand-green"

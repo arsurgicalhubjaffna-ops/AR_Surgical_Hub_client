@@ -148,7 +148,7 @@ const Checkout: React.FC = () => {
                                         <span className="text-gray-400 font-500">Qty: {item.quantity}</span>
                                     </div>
                                     <span className="text-brand-green font-700 font-header shrink-0">
-                                        ${(item.price * item.quantity).toFixed(2)}
+                                        Rs. {(item.price * item.quantity).toFixed(2)}
                                     </span>
                                 </div>
                             ))}
@@ -157,7 +157,7 @@ const Checkout: React.FC = () => {
                         <div className="border-t border-black/8 pt-6 mb-8">
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-800 text-brand-text">Total to Pay</span>
-                                <span className="text-2xl font-800 text-brand-green font-header">${cartTotal.toFixed(2)}</span>
+                                <span className="text-2xl font-800 text-brand-green font-header">Rs. {cartTotal.toFixed(2)}</span>
                             </div>
                         </div>
 

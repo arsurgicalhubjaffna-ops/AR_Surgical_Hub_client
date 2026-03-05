@@ -91,7 +91,7 @@ const AdminOrders: React.FC = () => {
                                         <span className="text-[0.7rem] text-gray-400">{o.email || 'no-email@arsurgical.com'}</span>
                                     </div>
                                 </td>
-                                <td className="px-6 py-5 font-800 text-brand-text text-sm font-header">${Number(o.total_amount).toFixed(2)}</td>
+                                <td className="px-6 py-5 font-800 text-brand-text text-sm font-header">Rs. {Number(o.total_amount).toFixed(2)}</td>
                                 <td className="px-6 py-5">
                                     <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[0.65rem] font-800 uppercase tracking-widest border ${o.payment_status === 'paid' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
                                         {o.payment_status}

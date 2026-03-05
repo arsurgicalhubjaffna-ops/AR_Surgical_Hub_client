@@ -65,9 +65,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
                 {/* Price + Cart */}
                 <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-black/8 gap-2">
-                    <span className="font-header text-lg font-800 text-brand-green tracking-tight shrink-0">
-                        ${typeof product.price === 'number' ? product.price.toFixed(2) : parseFloat(product.price).toFixed(2)}
-                    </span>
+                        Rs. {typeof product.price === 'number' ? product.price.toFixed(2) : parseFloat(product.price).toFixed(2)}
                     <button
                         className="inline-flex items-center gap-1.25 bg-brand-green text-white border-none px-3 py-1.75 rounded-md text-[0.75rem] font-600 cursor-pointer font-primary transition-colors duration-200 hover:bg-brand-green-dark whitespace-nowrap"
                         onClick={() => addToCart(product)}

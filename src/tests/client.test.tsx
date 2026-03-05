@@ -207,7 +207,7 @@ describe('ProductCard', () => {
     it('renders product name and price', () => {
         render(<AllProviders><ProductCard product={mockProduct} /></AllProviders>);
         expect(screen.getByText('Digital Stethoscope')).toBeInTheDocument();
-        expect(screen.getByText('$299.99')).toBeInTheDocument();
+        expect(screen.getByText('Rs. 299.99')).toBeInTheDocument();
     });
 
     it('renders product image with correct alt text', () => {
