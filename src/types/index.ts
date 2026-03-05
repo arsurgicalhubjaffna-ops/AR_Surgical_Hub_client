@@ -62,12 +62,26 @@ export interface Order {
     id: string;
     user_id: string;
     total_amount: number;
-    status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-    payment_status: 'pending' | 'paid' | 'failed';
+    status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+    payment_status: 'unpaid' | 'paid' | 'failed';
+    payment_method?: string;
+    shipping_address?: string;
     created_at: string;
     users?: {
         full_name: string;
         email: string;
+    };
+}
+
+export interface OrderItem {
+    id: string;
+    order_id: string;
+    product_id: string;
+    quantity: number;
+    price: number;
+    products?: {
+        name: string;
+        image_url: string;
     };
 }
 
