@@ -94,11 +94,11 @@ const Home: React.FC = () => {
                                 Premium quality surgical tools designed for the world's leading
                                 medical professionals. Engineering excellence in every cut.
                             </p>
-                            <div className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8">
-                                <Link to="/shop" className="inline-flex items-center gap-2 bg-brand-green text-white px-7 py-3.5 rounded-xl font-600 no-underline transition-all duration-200 border-1.5 border-brand-green hover:bg-brand-green-dark hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-green/20 shadow-sm">
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-8">
+                                <Link to="/shop" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-green text-white px-7 py-3.5 rounded-xl font-600 no-underline transition-all duration-200 border-1.5 border-brand-green hover:bg-brand-green-dark hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-green/20 shadow-sm">
                                     Explore Products <ArrowRight size={17} />
                                 </Link>
-                                <Link to="/quotes" className="inline-flex items-center bg-white text-brand-green px-7 py-3.5 rounded-xl font-600 no-underline transition-all duration-200 border-1.5 border-brand-green hover:bg-brand-green-light hover:-translate-y-0.5 shadow-sm">
+                                <Link to="/quotes" className="w-full sm:w-auto inline-flex items-center justify-center bg-white text-brand-green px-7 py-3.5 rounded-xl font-600 no-underline transition-all duration-200 border-1.5 border-brand-green hover:bg-brand-green-light hover:-translate-y-0.5 shadow-sm">
                                     Request Bulk Quote
                                 </Link>
                             </div>

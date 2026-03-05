@@ -55,20 +55,37 @@ const AdminPanel: React.FC = () => {
     const pageTitle = NAV_ITEMS.find(i => i.key === activePage)?.label || 'Admin Panel';
 
     return (
-        <div className="flex h-screen bg-brand-bg">
+        <div className="flex h-screen bg-brand-bg relative overflow-hidden">
+            {/* Sidebar Backdrop (Mobile only) */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-[45] lg:hidden backdrop-blur-sm transition-opacity"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
             <aside
                 className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#0f172a] text-white transition-all duration-300 ease-in-out transform shadow-2xl ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'}`}
             >
                 {/* Logo Section */}
-                <div className="h-20 flex items-center px-6 border-b border-white/5">
-                    <img src="/ar.svg" alt="AR" className="w-10 h-10 shrink-0 brightness-0 invert opacity-90" />
-                    {sidebarOpen && (
-                        <div className="ml-3 overflow-hidden whitespace-nowrap">
-                            <h2 className="text-lg font-800 tracking-tighter text-white">AR SURGICAL</h2>
-                            <span className="text-[0.65rem] font-700 uppercase tracking-widest text-brand-blue">Advanced Hub</span>
-                        </div>
-                    )}
+                <div className="h-20 flex items-center justify-between px-6 border-b border-white/5">
+                    <div className="flex items-center">
+                        <img src="/ar.svg" alt="AR" className="w-10 h-10 shrink-0 brightness-0 invert opacity-90" />
+                        {(sidebarOpen || !sidebarOpen) && sidebarOpen && (
+                            <div className="ml-3 overflow-hidden whitespace-nowrap">
+                                <h2 className="text-lg font-800 tracking-tighter text-white">AR SURGICAL</h2>
+                                <span className="text-[0.65rem] font-700 uppercase tracking-widest text-brand-blue">Advanced Hub</span>
+                            </div>
+                        )}
+                    </div>
+                    {/* Mobile Close Button */}
+                    <button
+                        onClick={() => setSidebarOpen(false)}
+                        className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
 
                 {/* Navigation */}
@@ -76,11 +93,14 @@ const AdminPanel: React.FC = () => {
                     {NAV_ITEMS.map(({ key, label, Icon }) => (
                         <button
                             key={key}
-                            onClick={() => setActivePage(key)}
+                            onClick={() => {
+                                setActivePage(key);
+                                if (window.innerWidth < 1024) setSidebarOpen(false);
+                            }}
                             className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activePage === key ? 'bg-brand-green text-white shadow-lg shadow-brand-green/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
                         >
                             <Icon size={20} className={activePage === key ? 'text-white' : 'group-hover:text-brand-green'} />
-                            {sidebarOpen && <span className="font-600 text-[0.93rem] tracking-tight">{label}</span>}
+                            <span className={`font-600 text-[0.93rem] tracking-tight ${sidebarOpen ? 'block' : 'hidden lg:hidden'}`}>{label}</span>
                         </button>
                     ))}
                 </nav>
@@ -98,7 +118,7 @@ const AdminPanel: React.FC = () => {
             </aside>
 
             {/* Main Content */}
-            <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'}`}>
+            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'}`}>
                 {/* Topbar */}
                 <header className="h-20 bg-white border-b border-black/5 px-8 flex items-center justify-between sticky top-0 z-40">
                     <div className="flex items-center gap-6">

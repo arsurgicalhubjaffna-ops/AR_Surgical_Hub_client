@@ -89,7 +89,7 @@ const Header: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3.5 sm:gap-4 md:gap-3">
                             <button className="md:hidden relative text-secondary flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 border border-black/8 cursor-pointer transition-all duration-200 hover:text-brand-green hover:bg-brand-green-light hover:border-brand-green" onClick={toggleSearch}>
                                 {isSearchOpen ? <X size={22} /> : <Search size={22} />}
                             </button>
