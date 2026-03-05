@@ -2,6 +2,7 @@ import React from 'react';
 import { useCart } from '../context/CartContext';
 import { Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ProductImage from '../components/ProductImage';
 
 const Cart: React.FC = () => {
     const { cart, removeFromCart, cartTotal, clearCart } = useCart();
@@ -40,10 +41,11 @@ const Cart: React.FC = () => {
                         <div className="flex flex-col gap-4">
                             {cart.map((item) => (
                                 <div key={item.id} className="bg-white border border-black/8 p-4 md:p-6 rounded-2xl flex flex-col sm:flex-row items-center gap-5 md:gap-8 shadow-sm transition-all hover:shadow-md">
-                                    <img
-                                        src={item.image_url || 'https://via.placeholder.com/120x120/e8f8f6/00b5a4?text=Product'}
+                                    <ProductImage
+                                        src={item.image_url}
                                         alt={item.name}
                                         className="w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover shadow-sm shrink-0"
+                                        placeholderClassName="text-xl"
                                     />
                                     <div className="flex-1 text-center sm:text-left">
                                         <h3 className="text-lg font-700 text-brand-text mb-1 leading-tight">{item.name}</h3>

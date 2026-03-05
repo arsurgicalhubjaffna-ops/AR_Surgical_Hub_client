@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import insforge from '../../lib/insforge';
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search, Filter } from 'lucide-react';
 import { Product, Category } from '../../types';
+import ProductImage from '../../components/ProductImage';
 
 const emptyForm = { name: '', description: '', price: '', stock: '', category_id: '', image_url: '' };
 
@@ -135,11 +136,12 @@ const AdminProducts: React.FC = () => {
                                 <tr key={p.id} className="hover:bg-brand-bg/30 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="w-12 h-12 bg-brand-bg rounded-lg overflow-hidden border border-black/5 flex items-center justify-center">
-                                            {p.image_url ? (
-                                                <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
-                                            ) : (
-                                                <ImageIcon size={20} className="text-gray-300" />
-                                            )}
+                                            <ProductImage
+                                                src={p.image_url}
+                                                alt={p.name}
+                                                className="w-full h-full object-cover"
+                                                placeholderClassName="text-lg"
+                                            />
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -266,7 +268,12 @@ const AdminProducts: React.FC = () => {
                                         onChange={e => setForm({ ...form, image_url: e.target.value })}
                                     />
                                     <div className="w-12 h-12 rounded-xl bg-brand-bg flex items-center justify-center border border-black/5 shrink-0 overflow-hidden">
-                                        {form.image_url ? <img src={form.image_url} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-gray-300" />}
+                                        <ProductImage
+                                            src={form.image_url}
+                                            alt={form.name || "Preview"}
+                                            className="w-full h-full object-cover"
+                                            placeholderClassName="text-lg"
+                                        />
                                     </div>
                                 </div>
                             </div>

@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { Product, Review } from '../types';
+import ProductImage from '../components/ProductImage';
 
 const ProductDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -90,8 +91,8 @@ const ProductDetail: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     {/* Image Section */}
                     <div className="bg-white/70 backdrop-blur-md border border-black/8 p-10 md:p-14 rounded-[32px] overflow-hidden shadow-sm">
-                        <img
-                            src={product.image_url || 'https://via.placeholder.com/600x400'}
+                        <ProductImage
+                            src={product.image_url}
                             alt={product.name}
                             className="w-full rounded-2xl shadow-3xl transition-transform duration-500 hover:scale-105"
                         />

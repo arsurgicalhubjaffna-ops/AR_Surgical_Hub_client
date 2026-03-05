@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { Product } from '../types';
+import ProductImage from './ProductImage';
 
 interface ProductCardProps {
     product: Product & { category_name?: string | null };
@@ -18,8 +19,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="bg-white border border-black/8 rounded-xl overflow-hidden flex flex-col transition-all duration-280 hover:shadow-lg hover:-translate-y-1 hover:border-brand-green/25 peer">
             {/* Image area */}
             <div className="relative overflow-hidden bg-brand-bg aspect-[4/3] group">
-                <img
-                    src={product.image_url || `https://via.placeholder.com/280x200/e8f8f6/00b5a4?text=${encodeURIComponent(product.name || 'Product')}`}
+                <ProductImage
+                    src={product.image_url}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -65,7 +66,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
                 {/* Price + Cart */}
                 <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-black/8 gap-2">
-                        Rs. {typeof product.price === 'number' ? product.price.toFixed(2) : parseFloat(product.price).toFixed(2)}
+                    Rs. {typeof product.price === 'number' ? product.price.toFixed(2) : parseFloat(product.price).toFixed(2)}
                     <button
                         className="inline-flex items-center gap-1.25 bg-brand-green text-white border-none px-3 py-1.75 rounded-md text-[0.75rem] font-600 cursor-pointer font-primary transition-colors duration-200 hover:bg-brand-green-dark whitespace-nowrap"
                         onClick={() => addToCart(product)}
