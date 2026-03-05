@@ -30,7 +30,7 @@ const AdminDashboard: React.FC = () => {
 
                 const { data: recentOrders } = await insforge.database
                     .from('orders')
-                    .select('*, users(full_name, email)')
+                    .select('*, users(full_name, email, phone)')
                     .order('created_at', { ascending: false })
                     .limit(8);
 
@@ -38,6 +38,7 @@ const AdminDashboard: React.FC = () => {
                     ...o,
                     full_name: o.users?.full_name || null,
                     email: o.users?.email || null,
+                    phone: o.users?.phone || null,
                 }));
                 setOrders(mapped);
             } catch (err) {
@@ -113,9 +114,10 @@ const AdminDashboard: React.FC = () => {
                                 <tr key={o.id} className="hover:bg-brand-bg/30 transition-colors">
                                     <td className="px-8 py-5 font-mono text-[0.75rem] text-gray-500">#{o.id.slice(0, 8)}</td>
                                     <td className="px-8 py-5">
-                                        <div className="flex flex-col">
+                                        <div className="flex flex-col gap-0.5">
                                             <span className="font-700 text-brand-text text-sm">{o.full_name || 'Guest User'}</span>
                                             <span className="text-[0.7rem] text-gray-400">{o.email || 'no-email@arsurgical.com'}</span>
+                                            {o.phone && <span className="text-[0.7rem] text-brand-green font-600 tracking-tight mt-0.5">{o.phone}</span>}
                                         </div>
                                     </td>
                                     <td className="px-8 py-5 font-800 text-brand-text text-sm font-header">Rs. {Number(o.total_amount).toFixed(2)}</td>

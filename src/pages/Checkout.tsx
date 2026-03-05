@@ -3,14 +3,20 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import insforge from '../lib/insforge';
-import { CreditCard, Landmark, ShieldCheck, ArrowRight } from 'lucide-react';
+import { CreditCard, Landmark, ShieldCheck, ArrowRight, Clock, Phone } from 'lucide-react';
 
 const Checkout: React.FC = () => {
     const { cart, cartTotal, clearCart } = useCart();
     const { user } = useAuth();
     const navigate = useNavigate();
     const [address, setAddress] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState<'credit_card' | 'bank_transfer'>('credit_card');
+
+    // Clean up any existing phone formats (e.g. +91-XXX) to just take the last 9 digits for the local input
+    const rawPhone = (user?.phone || '').replace(/[^0-9]/g, '');
+    // If it starts with 94, or is longer than 9, just take the local 9 digits
+    const initialPhone = rawPhone.length > 9 ? rawPhone.slice(-9) : rawPhone;
+
+    const [phone, setPhone] = useState(initialPhone);
     const [loading, setLoading] = useState(false);
 
     const handleCheckout = async (e: React.FormEvent) => {
@@ -23,6 +29,15 @@ const Checkout: React.FC = () => {
 
         setLoading(true);
         try {
+            // Update user profile with phone number if provided/changed
+            const fullPhone = `+94${phone.trim()}`;
+            if (fullPhone && fullPhone !== user.phone) {
+                await insforge.database
+                    .from('users')
+                    .update({ phone: fullPhone })
+                    .eq('id', user.id);
+            }
+
             // Create order
             const { data: order, error: orderError } = await insforge.database
                 .from('orders')
@@ -30,7 +45,7 @@ const Checkout: React.FC = () => {
                     user_id: user.id,
                     total_amount: cartTotal,
                     shipping_address: address,
-                    payment_method: paymentMethod,
+                    payment_method: 'manual_confirmation',
                     status: 'pending',
                     payment_status: 'unpaid',
                 }])
@@ -90,48 +105,76 @@ const Checkout: React.FC = () => {
 
                     {/* Form Section */}
                     <div className="bg-white border border-black/8 p-8 md:p-10 rounded-[32px] shadow-sm flex flex-col gap-10">
-                        {/* Shipping */}
-                        <section>
-                            <h3 className="text-lg font-800 text-brand-green mb-6 flex items-center gap-2">
-                                <Landmark size={20} /> Shipping Information
+                        {/* Delivery Info */}
+                        <section className="flex flex-col gap-6">
+                            <h3 className="text-lg font-800 text-brand-green flex items-center gap-2">
+                                <Landmark size={20} /> Shipping & Contact Information
                             </h3>
-                            <textarea
-                                className="w-full bg-brand-bg border border-black/8 rounded-2xl p-5 text-brand-text outline-none focus:border-brand-green transition-all resize-none min-h-[120px]"
-                                placeholder="Enter your full shipping address (Street, City, Country, ZIP)"
-                                required
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                            ></textarea>
+
+                            <div>
+                                <label className="block text-sm font-700 text-brand-text mb-2.5">Contact Number</label>
+                                <div className="relative flex items-center bg-brand-bg border border-black/8 rounded-xl focus-within:border-brand-green transition-all overflow-hidden">
+                                    <div className="flex items-center gap-2 pl-4 pr-3 py-3.5 border-r border-black/8 bg-black/5 text-gray-500 font-700 select-none">
+                                        <Phone size={18} className="text-brand-green" />
+                                        <span>+94</span>
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        className="w-full bg-transparent px-4 py-3.5 text-brand-text outline-none focus:ring-0"
+                                        placeholder="7X XXX XXXX"
+                                        required
+                                        value={phone}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/[^0-9]/g, '');
+                                            if (val.length <= 9) setPhone(val);
+                                        }}
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-400 mt-1.5 font-500">Required for manual order confirmation (without leading 0).</p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-700 text-brand-text mb-2.5">Delivery Address</label>
+                                <textarea
+                                    className="w-full bg-brand-bg border border-black/8 rounded-2xl p-5 text-brand-text outline-none focus:border-brand-green transition-all resize-none min-h-[120px]"
+                                    placeholder="Enter your full shipping address (Street, City, District, Postal Code)"
+                                    required
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                ></textarea>
+                            </div>
                         </section>
 
-                        {/* Payment */}
-                        <section>
-                            <h3 className="text-lg font-800 text-brand-green mb-6 flex items-center gap-2">
-                                <CreditCard size={20} /> Payment Method
+                        {/* Payment Confirmation Info */}
+                        <section className="bg-brand-green/5 border border-brand-green/20 p-6 rounded-2xl">
+                            <h3 className="text-lg font-800 text-brand-green mb-3 flex items-center gap-2">
+                                <ShieldCheck size={20} /> Order Confirmation Process
                             </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <label className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${paymentMethod === 'credit_card' ? 'bg-brand-green-light border-brand-green shadow-sm' : 'bg-brand-bg border-black/8 hover:border-brand-green/25'}`}>
-                                    <input
-                                        type="radio"
-                                        name="payment"
-                                        value="credit_card"
-                                        className="w-5 h-5 accent-brand-green"
-                                        checked={paymentMethod === 'credit_card'}
-                                        onChange={(e) => setPaymentMethod(e.target.value as any)}
-                                    />
-                                    <span className="font-700 text-brand-text">Credit Card</span>
-                                </label>
-                                <label className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${paymentMethod === 'bank_transfer' ? 'bg-brand-green-light border-brand-green shadow-sm' : 'bg-brand-bg border-black/8 hover:border-brand-green/25'}`}>
-                                    <input
-                                        type="radio"
-                                        name="payment"
-                                        value="bank_transfer"
-                                        className="w-5 h-5 accent-brand-green"
-                                        checked={paymentMethod === 'bank_transfer'}
-                                        onChange={(e) => setPaymentMethod(e.target.value as any)}
-                                    />
-                                    <span className="font-700 text-brand-text">Bank Transfer</span>
-                                </label>
+                            <p className="text-secondary text-sm leading-relaxed mb-4">
+                                After placing your order, our administrative team will contact you directly to confirm the details and arrange the fulfillment process.
+                            </p>
+                            <div className="flex items-center gap-3 text-brand-green text-[0.75rem] font-700 uppercase tracking-widest bg-white/50 w-fit px-3 py-1.5 rounded-lg border border-brand-green/10">
+                                <Clock size={14} /> Admin will contact you shortly
+                            </div>
+                        </section>
+
+                        {/* Future Implementation */}
+                        <section className="opacity-50 grayscale">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-800 text-gray-400 flex items-center gap-2">
+                                    <CreditCard size={20} /> Payment Method
+                                </h3>
+                                <span className="text-[0.6rem] font-800 uppercase tracking-[0.1em] bg-gray-100 text-gray-400 px-2 py-0.5 rounded">Future Implementation</span>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pointer-events-none">
+                                <div className="flex items-center gap-4 p-5 rounded-2xl border border-dashed border-gray-200 bg-gray-50/50">
+                                    <div className="w-5 h-5 rounded-full border-2 border-gray-200" />
+                                    <span className="font-700 text-gray-300">Credit Card</span>
+                                </div>
+                                <div className="flex items-center gap-4 p-5 rounded-2xl border border-dashed border-gray-200 bg-gray-50/50">
+                                    <div className="w-5 h-5 rounded-full border-2 border-gray-200" />
+                                    <span className="font-700 text-gray-300">Bank Transfer</span>
+                                </div>
                             </div>
                         </section>
                     </div>
