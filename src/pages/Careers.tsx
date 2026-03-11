@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Briefcase, MapPin, DollarSign, Clock, ChevronRight } from 'lucide-react';
 import insforge from '../lib/insforge';
+import { useSettings } from '../hooks/useSettings';
 
 interface Vacancy {
     id: string;
@@ -15,6 +16,7 @@ interface Vacancy {
 const Careers: React.FC = () => {
     const [vacancies, setVacancies] = useState<Vacancy[]>([]);
     const [loading, setLoading] = useState(true);
+    const { getSetting } = useSettings();
 
     useEffect(() => {
         const fetchVacancies = async () => {
@@ -41,10 +43,10 @@ const Careers: React.FC = () => {
             <div className="bg-white border-b border-black/8 py-12 md:py-16 mb-12">
                 <div className="max-w-[1400px] mx-auto px-5 md:px-10 text-center">
                     <h1 className="text-3xl md:text-5xl font-800 tracking-tighter text-brand-text mb-3">
-                        Join Our <span className="text-brand-green">Team</span>
+                        {getSetting('careers_hero_title', 'Join Our Team')}
                     </h1>
                     <p className="text-secondary text-base md:text-lg max-w-2xl mx-auto">
-                        Build the future of surgical precision and medical excellence with AR SURGICAL HUB.
+                        {getSetting('careers_hero_description', 'Build the future of surgical precision and medical excellence with AR SURGICAL HUB.')}
                     </p>
                 </div>
             </div>
@@ -92,7 +94,7 @@ const Careers: React.FC = () => {
 
                 <div className="mt-16 bg-brand-green/5 border border-brand-green/10 rounded-2xl p-8 text-center">
                     <h4 className="text-brand-text font-800 mb-2">Can't find a suitable role?</h4>
-                    <p className="text-secondary text-sm mb-4">Send your spontaneous application and CV to careers@arsurgicalhub.com</p>
+                    <p className="text-secondary text-sm mb-4">Send your spontaneous application and CV to {getSetting('careers_email', 'careers@arsurgicalhub.com')}</p>
                 </div>
             </div>
         </div>

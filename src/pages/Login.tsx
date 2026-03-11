@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../hooks/useSettings';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Phone, ArrowRight, KeyRound, RefreshCw } from 'lucide-react';
 
@@ -16,6 +17,7 @@ const Login: React.FC = () => {
         phone: ''
     });
     const { login, register, verifyEmail: verifyEmailFn, resendVerification } = useAuth();
+    const { getSetting } = useSettings();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
@@ -145,7 +147,7 @@ const Login: React.FC = () => {
                         {isLogin ? 'Welcome Back' : 'Create Account'}
                     </h2>
                     <p className="text-brand-text-muted text-sm">
-                        {isLogin ? 'Securely access your surgical hub account' : 'Join AR SURGICAL HUB for professional medical solutions'}
+                        {isLogin ? 'Securely access your surgical hub account' : getSetting('login_signup_text', 'Join AR SURGICAL HUB for professional medical solutions')}
                     </p>
                 </div>
 

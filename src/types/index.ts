@@ -97,3 +97,13 @@ export interface Blog {
     created_at: string;
     updated_at: string;
 }
+
+export interface Setting {
+    id: string;
+    key: string;
+    value: string;
+    description?: string;
+    settings_group: string;
+    field_type: 'text' | 'textarea' | 'number' | 'boolean';
+    updated_at: string;
+}

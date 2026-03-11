@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -20,8 +20,16 @@ import AdminRoute from './pages/Admin/AdminRoute';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { useSettings } from './hooks/useSettings';
 
 function App() {
+  const { getSetting } = useSettings();
+
+  useEffect(() => {
+    const title = getSetting('site_title', 'AR SURGICAL HUB - Precision Surgical Instruments');
+    document.title = title;
+  }, [getSetting]);
+
   return (
     <AuthProvider>
       <CartProvider>

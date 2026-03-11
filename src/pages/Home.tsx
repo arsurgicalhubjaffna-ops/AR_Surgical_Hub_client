@@ -8,6 +8,7 @@ import insforge from '../lib/insforge';
 import ProductCard from '../components/ProductCard';
 import ProductImage from '../components/ProductImage';
 import { Product } from '../types';
+import { useSettings } from '../hooks/useSettings';
 
 /* ── Trust bar data ── */
 const TRUST_ITEMS = [
@@ -32,6 +33,7 @@ const Home: React.FC = () => {
     const [trending, setTrending] = useState<Product[]>([]);
     const [blogs, setBlogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const { getSetting } = useSettings();
 
     useEffect(() => {
         const load = async () => {
@@ -84,15 +86,13 @@ const Home: React.FC = () => {
                         {/* Left: text */}
                         <div className="flex-1">
                             <span className="inline-block bg-brand-green/12 text-brand-green border border-brand-green/25 rounded-full px-3.5 py-1.25 text-[0.74rem] font-700 uppercase tracking-widest mb-4.5">
-                                Medical Excellence Since 1995
+                                {getSetting('home_badge_text', 'Medical Excellence Since 1995')}
                             </span>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-800 leading-[1.12] mb-4.5 tracking-tighter text-brand-text">
-                                Precision Instruments<br />
-                                for <span className="text-brand-green">Surgical Mastery</span>
+                                {getSetting('home_hero_title', 'Precision Instruments for Surgical Mastery')}
                             </h1>
                             <p className="text-brand-text/70 text-[1.1rem] leading-relaxed mb-8 max-w-[600px] mx-auto lg:mx-0">
-                                Premium quality surgical tools designed for the world's leading
-                                medical professionals. Engineering excellence in every cut.
+                                {getSetting('home_hero_subtitle', 'Premium quality surgical tools designed for the world\'s leading medical professionals. Engineering excellence in every cut.')}
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-8">
                                 <Link to="/shop" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-green text-white px-7 py-3.5 rounded-xl font-600 no-underline transition-all duration-200 border-1.5 border-brand-green hover:bg-brand-green-dark hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-green/20 shadow-sm">
@@ -169,11 +169,11 @@ const Home: React.FC = () => {
                     </div>
                     <div className="text-center lg:text-left">
                         <span className="inline-block bg-brand-green/12 text-brand-green border border-brand-green/25 rounded-full px-3.5 py-1.25 text-[0.74rem] font-700 uppercase tracking-widest mb-3">Why Choose Us</span>
-                        <h2 className="text-[2.2rem] font-800 leading-tight mb-4 tracking-tighter text-brand-text">Your Faithful Partner<br /><span className="text-brand-green">in Medical Goods</span></h2>
+                        <h2 className="text-[2.2rem] font-800 leading-tight mb-4 tracking-tighter text-brand-text">
+                            {getSetting('home_about_title', 'Your Faithful Partner in Medical Goods')}
+                        </h2>
                         <p className="text-brand-text/70 text-[0.97rem] leading-[1.75] mb-8 max-w-[500px] mx-auto lg:mx-0">
-                            AR SURGICAL HUB has been a trusted supplier for hospitals, clinics, and
-                            surgical centers worldwide since 1995. Every instrument is precision-crafted
-                            from medical-grade materials and undergoes rigorous quality testing.
+                            {getSetting('home_about_description', 'AR SURGICAL HUB has been a trusted supplier for hospitals, clinics, and surgical centers worldwide since 1995. Every instrument is precision-crafted from medical-grade materials and undergoes rigorous quality testing.')}
                         </p>
                         <div className="flex flex-wrap justify-center lg:justify-start gap-8 mb-8">
                             {[
@@ -221,8 +221,12 @@ const Home: React.FC = () => {
                         <div className="absolute right-[-60px] top-[-60px] w-60 h-60 rounded-full bg-white/7 pointer-events-none group-hover:scale-110 transition-transform duration-700" />
                         <div className="flex-1 text-center md:text-left">
                             <span className="inline-block bg-white/20 text-white text-[0.7rem] font-700 uppercase tracking-widest px-3 py-1 rounded-full mb-3.5">Limited Offer</span>
-                            <h2 className="text-[2rem] font-800 text-white leading-[1.15] mb-2.5 tracking-tight">Free Covid-19 Vaccine<br />Campaign Today</h2>
-                            <p className="text-white/80 text-[0.95rem] mb-6 max-w-[380px] mx-auto md:mx-0">Request your free consultation and vaccine information kit from our medical experts.</p>
+                            <h2 className="text-[2rem] font-800 text-white leading-[1.15] mb-2.5 tracking-tight">
+                                {getSetting('promo_title', 'Free Covid-19 Vaccine Campaign Today')}
+                            </h2>
+                            <p className="text-white/80 text-[0.95rem] mb-6 max-w-[380px] mx-auto md:mx-0">
+                                {getSetting('promo_description', 'Request your free consultation and vaccine information kit from our medical experts.')}
+                            </p>
                             <Link to="/quotes" className="inline-flex items-center gap-2 bg-white text-brand-green px-7 py-3.5 rounded-xl font-600 no-underline transition-all duration-200 shadow-xl hover:bg-brand-green-light hover:text-brand-green-dark">Get a Free Quote <ArrowRight size={16} /></Link>
                         </div>
                         <div className="shrink-0 w-full max-w-[280px]">

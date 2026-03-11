@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { useSettings } from '../hooks/useSettings';
 
 const Footer: React.FC = () => {
+    const { getSetting } = useSettings();
     return (
         <footer className="bg-brand-footer pt-16 md:pt-20 mt-0">
             <div className="max-w-[1400px] mx-auto px-5 md:px-10">
@@ -18,22 +20,21 @@ const Footer: React.FC = () => {
                             </div>
                         </Link>
                         <p className="text-white/50 text-[0.87rem] leading-[1.75] mb-5.5 max-w-[300px]">
-                            Leading provider of precision surgical instruments and medical equipment.
-                            Quality and trust since 1995, serving healthcare professionals worldwide.
+                            {getSetting('footer_description', 'Leading provider of precision surgical instruments and medical equipment. Quality and trust since 1995, serving healthcare professionals worldwide.')}
                         </p>
                         {/* Contact */}
                         <div className="flex flex-col gap-3 mb-6 text-white/50 text-[0.87rem]">
                             <div className="flex items-start gap-2.5">
                                 <Phone size={16} className="text-brand-blue shrink-0 mt-0.5" />
-                                <span>+94 77 0700 737</span>
+                                <span>{getSetting('site_phone', '+94 77 0700 737')}</span>
                             </div>
                             <div className="flex items-start gap-2">
                                 <Mail size={15} className="text-brand-green shrink-0 mt-0.5" />
-                                <span>support@arsurgicalhub.com</span>
+                                <span>{getSetting('site_email', 'support@arsurgicalhub.com')}</span>
                             </div>
                             <div className="flex items-start gap-2">
                                 <MapPin size={15} className="text-brand-green shrink-0 mt-0.5" />
-                                <span>158A, Hospital Road Jaffna</span>
+                                <span>{getSetting('site_address', '158A, Hospital Road Jaffna')}</span>
                             </div>
                         </div>
                         {/* Social */}
@@ -114,7 +115,7 @@ const Footer: React.FC = () => {
             {/* Bottom bar */}
             <div className="bg-black/20 border-t border-white/5 mt-0">
                 <div className="max-w-[1400px] mx-auto px-5 md:px-10 flex flex-col md:flex-row items-center justify-between py-4 gap-2.5">
-                    <p className="text-white/30 text-[0.8rem]">© 2026 AR SURGICAL HUB. All rights reserved.</p>
+                    <p className="text-white/30 text-[0.8rem]">© {new Date().getFullYear()} {getSetting('company_name', 'AR SURGICAL HUB')}. All rights reserved.</p>
                     <div className="flex gap-5">
                         {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
                             <Link key={item} to="/" className="text-white/30 text-[0.8rem] transition-colors duration-200 hover:text-white/70">

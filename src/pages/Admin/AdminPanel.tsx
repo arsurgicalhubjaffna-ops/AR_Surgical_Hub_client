@@ -13,8 +13,9 @@ import AdminOrders from './AdminOrders';
 import AdminUsers from './AdminUsers';
 import AdminQuotes from './AdminQuotes';
 import AdminBlogs from './AdminBlogs';
+import AdminSettings from './AdminSettings';
 
-type AdminPage = 'dashboard' | 'products' | 'categories' | 'subcategories' | 'orders' | 'users' | 'quotes' | 'blogs';
+type AdminPage = 'dashboard' | 'products' | 'categories' | 'subcategories' | 'orders' | 'users' | 'quotes' | 'blogs' | 'settings';
 
 const NAV_ITEMS: { key: AdminPage; label: string; Icon: any }[] = [
     { key: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
@@ -25,6 +26,7 @@ const NAV_ITEMS: { key: AdminPage; label: string; Icon: any }[] = [
     { key: 'users', label: 'Users', Icon: Users },
     { key: 'blogs', label: 'Blogs', Icon: FileText },
     { key: 'quotes', label: 'Quote Requests', Icon: MessageSquare },
+    { key: 'settings', label: 'Site Settings', Icon: Settings },
 ];
 
 const AdminPanel: React.FC = () => {
@@ -48,6 +50,7 @@ const AdminPanel: React.FC = () => {
             case 'users': return <AdminUsers />;
             case 'blogs': return <AdminBlogs />;
             case 'quotes': return <AdminQuotes />;
+            case 'settings': return <AdminSettings />;
             default: return <AdminDashboard />;
         }
     };

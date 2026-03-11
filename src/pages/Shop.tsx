@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { useSettings } from '../hooks/useSettings';
 import insforge from '../lib/insforge';
 import ProductCard from '../components/ProductCard';
 import { Product, Category, Subcategory } from '../types';
@@ -10,6 +11,7 @@ const Shop: React.FC = () => {
     const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
+    const { getSetting } = useSettings();
     const queryParams = new URLSearchParams(location.search);
     const categoryId = queryParams.get('category');
     const subcategoryId = queryParams.get('subcategory');
@@ -89,10 +91,10 @@ const Shop: React.FC = () => {
             <div className="bg-brand-surface border-b border-brand-border py-10 md:py-16 mb-8">
                 <div className="max-w-[1400px] mx-auto px-5 md:px-10 text-center md:text-left">
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-800 tracking-tighter text-brand-text mb-3">
-                        Catalog <span className="text-brand-green">Instruments</span>
+                        {getSetting('shop_hero_title', 'Catalog Instruments')}
                     </h1>
-                    <p className="text-brand-text-muted text-[1rem] md:text-[1.1rem] max-w-2xl">
-                        Premium selection of medical-grade surgical tools and equipment for elite healthcare professionals.
+                    <p className="text-brand-text-muted text-[1rem] md:text-[1.1rem] max-w-2xl mx-auto md:mx-0">
+                        {getSetting('shop_hero_description', 'Premium selection of medical-grade surgical tools and equipment for elite healthcare professionals.')}
                     </p>
                 </div>
             </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Send, FileText, ClipboardList, ArrowRight } from 'lucide-react';
 import insforge from '../lib/insforge';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../hooks/useSettings';
 
 const Quotes: React.FC = () => {
     const { user } = useAuth();
@@ -9,6 +10,7 @@ const Quotes: React.FC = () => {
         message: '',
     });
     const [loading, setLoading] = useState(false);
+    const { getSetting } = useSettings();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,10 +38,10 @@ const Quotes: React.FC = () => {
             <div className="bg-white border-b border-black/8 py-12 md:py-16 mb-12">
                 <div className="max-w-[1400px] mx-auto px-5 md:px-10 text-center">
                     <h1 className="text-3xl md:text-5xl font-800 tracking-tighter text-brand-text mb-3">
-                        Get a <span className="text-brand-green">Quote</span>
+                        {getSetting('quotes_hero_title', 'Get a Quote')}
                     </h1>
                     <p className="text-secondary text-base md:text-lg max-w-2xl mx-auto">
-                        Expert medical procurement solutions tailored to your institution's specific surgical instrument needs.
+                        {getSetting('quotes_hero_description', 'Expert medical procurement solutions tailored to your institution\'s specific surgical instrument needs.')}
                     </p>
                 </div>
             </div>
@@ -51,16 +53,16 @@ const Quotes: React.FC = () => {
                     <div className="flex flex-col gap-6 order-2 lg:order-1">
                         <div className="bg-white border border-black/8 p-8 md:p-10 rounded-[28px] text-center shadow-sm transition-all hover:shadow-md group">
                             <ClipboardList className="w-12 h-12 text-brand-green mx-auto mb-6 transition-transform group-hover:scale-110" />
-                            <h3 className="text-xl font-800 text-brand-text mb-3">Bulk Orders</h3>
+                            <h3 className="text-xl font-800 text-brand-text mb-3">{getSetting('quotes_bulk_title', 'Bulk Orders')}</h3>
                             <p className="text-secondary text-sm md:text-base leading-relaxed">
-                                Special institution-level pricing available for hospitals, clinics, and medical centers ordering in professional quantities.
+                                {getSetting('quotes_bulk_description', 'Special institution-level pricing available for hospitals, clinics, and medical centers ordering in professional quantities.')}
                             </p>
                         </div>
                         <div className="bg-white border border-black/8 p-8 md:p-10 rounded-[28px] text-center shadow-sm transition-all hover:shadow-md group">
                             <FileText className="w-12 h-12 text-brand-green mx-auto mb-6 transition-transform group-hover:scale-110" />
-                            <h3 className="text-xl font-800 text-brand-text mb-3">Custom Packages</h3>
+                            <h3 className="text-xl font-800 text-brand-text mb-3">{getSetting('quotes_custom_title', 'Custom Packages')}</h3>
                             <p className="text-secondary text-sm md:text-base leading-relaxed">
-                                Our engineering team can curate specialized surgical kits based on your procedural workflows and precision requirements.
+                                {getSetting('quotes_custom_description', 'Our engineering team can curate specialized surgical kits based on your procedural workflows and precision requirements.')}
                             </p>
                         </div>
                     </div>

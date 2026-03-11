@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useSettings } from '../hooks/useSettings';
 
 const Header: React.FC = () => {
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
+    const { getSetting } = useSettings();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -40,8 +42,8 @@ const Header: React.FC = () => {
                 <div className="max-w-[1400px] mx-auto px-5 md:px-10">
                     <div className="hidden md:flex justify-between items-center py-2 border-b border-white/10 text-[0.82rem] text-white/80">
                         <div className="flex gap-5.5">
-                            <span className="flex items-center gap-1.25 text-white/90 font-primary"><Phone size={14} className="text-brand-blue" /> +94 77 0700 737</span>
-                            <span className="flex items-center gap-1.25 text-white/90 font-primary"><Mail size={14} className="text-brand-blue" /> support@arsurgicalhub.com</span>
+                            <span className="flex items-center gap-1.25 text-white/90 font-primary"><Phone size={14} className="text-brand-blue" /> {getSetting('site_phone', '+94 77 0700 737')}</span>
+                            <span className="flex items-center gap-1.25 text-white/90 font-primary"><Mail size={14} className="text-brand-blue" /> {getSetting('site_email', 'support@arsurgicalhub.com')}</span>
                         </div>
                         <div className="flex items-center gap-3">
                             {user ? (
