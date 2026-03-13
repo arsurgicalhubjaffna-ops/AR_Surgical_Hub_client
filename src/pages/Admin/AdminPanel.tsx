@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     LayoutDashboard, Package, ShoppingBag, Users, LogOut,
-    Search, Bell, Settings, Menu, X, ChevronRight, ClipboardList, MessageSquare, FileText, ShieldCheck
+    Search, Bell, Settings, Menu, X, ChevronRight, ClipboardList, MessageSquare, FileText, ShieldCheck, Briefcase
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -15,8 +15,9 @@ import AdminQuotes from './AdminQuotes';
 import AdminBlogs from './AdminBlogs';
 import AdminSettings from './AdminSettings';
 import AdminWarranty from './AdminWarranty';
+import AdminCareers from './AdminCareers';
 
-type AdminPage = 'dashboard' | 'products' | 'categories' | 'subcategories' | 'orders' | 'users' | 'quotes' | 'blogs' | 'warranty' | 'settings';
+type AdminPage = 'dashboard' | 'products' | 'categories' | 'subcategories' | 'orders' | 'users' | 'quotes' | 'blogs' | 'careers' | 'warranty' | 'settings';
 
 const NAV_ITEMS: { key: AdminPage; label: string; Icon: any }[] = [
     { key: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
@@ -26,6 +27,7 @@ const NAV_ITEMS: { key: AdminPage; label: string; Icon: any }[] = [
     { key: 'orders', label: 'Orders', Icon: ClipboardList },
     { key: 'users', label: 'Users', Icon: Users },
     { key: 'blogs', label: 'Blogs', Icon: FileText },
+    { key: 'careers', label: 'Careers', Icon: Briefcase },
     { key: 'quotes', label: 'Quote Requests', Icon: MessageSquare },
     { key: 'warranty', label: 'Warranty Claims', Icon: ShieldCheck },
     { key: 'settings', label: 'Site Settings', Icon: Settings },
@@ -51,6 +53,7 @@ const AdminPanel: React.FC = () => {
             case 'orders': return <AdminOrders />;
             case 'users': return <AdminUsers />;
             case 'blogs': return <AdminBlogs />;
+            case 'careers': return <AdminCareers />;
             case 'quotes': return <AdminQuotes />;
             case 'warranty': return <AdminWarranty />;
             case 'settings': return <AdminSettings />;

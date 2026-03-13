@@ -137,3 +137,18 @@ export interface WarrantyClaim {
         image_url: string;
     };
 }
+
+export interface Vacancy {
+    id: string;
+    position: string;
+    location?: string;
+    salary_range?: string;
+    description?: string;
+    is_active: boolean;
+    type?: string;
+    department?: string;
+    experience_level?: string;
+    requirements?: string;
+    created_at: string;
+    updated_at?: string;
+}
