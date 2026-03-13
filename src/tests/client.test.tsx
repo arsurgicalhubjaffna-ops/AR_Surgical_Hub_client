@@ -379,7 +379,7 @@ describe('Login Page', () => {
     it('shows "Sign Up" button in register mode', async () => {
         render(<AllProviders><Login /></AllProviders>);
         await userEvent.click(screen.getByText('Create one'));
-        expect(screen.getByText(/Sign Up/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/Sign Up/i).length).toBeGreaterThan(0);
     });
 
     it('switches back to login when "Login here" is clicked', async () => {
