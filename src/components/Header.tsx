@@ -138,7 +138,7 @@ const Header: React.FC = () => {
                                 {isSearchOpen ? <X size={22} /> : <Search size={22} />}
                             </button>
 
-                            <div className={`hidden md:flex items-center gap-2 px-3.5 py-2 rounded-lg border border-black/8 bg-gray-50 transition-all duration-200 focus-within:border-brand-green focus-within:ring-3 focus-within:ring-brand-green-light ${isSearchOpen ? 'flex absolute top-full left-0 w-full p-4.5 bg-white border-t border-black/8 shadow-md z-[1001] animate-in slide-in-from-top-2' : ''}`}>
+                            <div className={`${isSearchOpen ? 'flex' : 'hidden'} md:flex items-center gap-2 px-3.5 py-2 rounded-lg border border-black/8 bg-gray-50 transition-all duration-200 focus-within:border-brand-green focus-within:ring-3 focus-within:ring-brand-green-light ${isSearchOpen ? 'absolute top-full left-0 w-full p-4.5 bg-white border-t border-black/8 shadow-md z-[1001] animate-in slide-in-from-top-2' : ''}`}>
                                 <div className="flex items-center w-full bg-brand-green-light/50 md:bg-transparent rounded-full md:rounded-none px-4 md:px-0">
                                     <input
                                         type="text"
@@ -152,7 +152,7 @@ const Header: React.FC = () => {
                                     />
                                     <Search
                                         size={18}
-                                        className="text-gray-400 shrink-0 hidden md:block cursor-pointer hover:text-brand-green transition-colors"
+                                        className={`text-gray-400 shrink-0 ${isSearchOpen ? 'block' : 'hidden'} md:block cursor-pointer hover:text-brand-green transition-colors`}
                                         onClick={() => handleSearch()}
                                     />
                                 </div>
