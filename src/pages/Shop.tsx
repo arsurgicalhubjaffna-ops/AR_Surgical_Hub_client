@@ -15,6 +15,7 @@ const Shop: React.FC = () => {
     const queryParams = new URLSearchParams(location.search);
     const categoryId = queryParams.get('category');
     const subcategoryId = queryParams.get('subcategory');
+    const searchTerm = queryParams.get('search');
     const [sortBy, setSortBy] = useState('latest'); // latest, price_asc, price_desc, stock
 
     useEffect(() => {
@@ -53,6 +54,9 @@ const Shop: React.FC = () => {
                 if (subcategoryId) {
                     query = query.eq('subcategory_id', subcategoryId);
                 }
+                if (searchTerm) {
+                    query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
+                }
 
                 // Apply dynamic sorting
                 if (sortBy === 'price_asc') {
@@ -83,7 +87,7 @@ const Shop: React.FC = () => {
             }
         };
         fetchData();
-    }, [categoryId, subcategoryId, sortBy]);
+    }, [categoryId, subcategoryId, sortBy, searchTerm]);
 
     return (
         <div className="min-h-screen bg-brand-bg pb-20">
@@ -198,6 +202,7 @@ const Shop: React.FC = () => {
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 px-1">
                             <div className="text-[0.84rem] text-gray-400">
                                 Showing <span className="text-brand-text font-600">{products.length}</span> results
+                                {searchTerm && <> for "<span className="text-brand-green font-600">{searchTerm}</span>"</>}
                                 {categoryId && categories.find(c => c.id === categoryId) && (
                                     <> in <span className="text-brand-green font-600">{categories.find(c => c.id === categoryId)?.name}</span></>
                                 )}

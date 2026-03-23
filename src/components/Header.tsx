@@ -1,17 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, User as UserIcon, Menu, X, Search, Phone, Mail, Heart, LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useSettings } from '../hooks/useSettings';
+import insforge from '../lib/insforge';
+import { Product } from '../types';
 
 const Header: React.FC = () => {
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
     const { getSetting } = useSettings();
+    const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [suggestions, setSuggestions] = useState<Product[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            if (searchQuery.trim().length >= 2) {
+                try {
+                    const { data } = await insforge.database
+                        .from('products')
+                        .select('*, categories(name)')
+                        .or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+                        .eq('is_active', true)
+                        .limit(5);
+
+                    setSuggestions(data || []);
+                    setShowSuggestions(true);
+                } catch (err) {
+                    console.error('Error fetching suggestions:', err);
+                }
+            } else {
+                setSuggestions([]);
+                setShowSuggestions(false);
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    const handleSearch = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+            setIsSearchOpen(false);
+            setShowSuggestions(false);
+            if (isMenuOpen) setIsMenuOpen(false);
+        }
+    };
 
     // Lock scroll when menu is open
     useEffect(() => {
@@ -99,9 +140,65 @@ const Header: React.FC = () => {
 
                             <div className={`hidden md:flex items-center gap-2 px-3.5 py-2 rounded-lg border border-black/8 bg-gray-50 transition-all duration-200 focus-within:border-brand-green focus-within:ring-3 focus-within:ring-brand-green-light ${isSearchOpen ? 'flex absolute top-full left-0 w-full p-4.5 bg-white border-t border-black/8 shadow-md z-[1001] animate-in slide-in-from-top-2' : ''}`}>
                                 <div className="flex items-center w-full bg-brand-green-light/50 md:bg-transparent rounded-full md:rounded-none px-4 md:px-0">
-                                    <input type="text" placeholder="Search instruments..." className="bg-transparent border-none text-brand-text outline-none w-[180px] text-[0.88rem] py-2 md:py-0" />
-                                    <Search size={18} className="text-gray-400 shrink-0 hidden md:block" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search instruments..."
+                                        className="bg-transparent border-none text-brand-text outline-none w-full md:w-[180px] text-[0.88rem] py-2 md:py-0"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                        onFocus={() => searchQuery.trim().length >= 2 && setShowSuggestions(true)}
+                                        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                    />
+                                    <Search
+                                        size={18}
+                                        className="text-gray-400 shrink-0 hidden md:block cursor-pointer hover:text-brand-green transition-colors"
+                                        onClick={() => handleSearch()}
+                                    />
                                 </div>
+
+                                {/* Suggestions Dropdown */}
+                                {showSuggestions && suggestions.length > 0 && (
+                                    <div className="absolute top-full left-0 w-full mt-2 bg-white border border-black/8 rounded-xl shadow-xl z-[1002] overflow-hidden animate-in fade-in slide-in-from-top-2">
+                                        <div className="p-2">
+                                            {suggestions.map((product) => (
+                                                <button
+                                                    key={product.id}
+                                                    onClick={() => {
+                                                        navigate(`/product/${product.id}`);
+                                                        setShowSuggestions(false);
+                                                        setSearchQuery('');
+                                                    }}
+                                                    className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-brand-green-light/30 transition-colors text-left border-none bg-transparent cursor-pointer"
+                                                >
+                                                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 border border-black/5">
+                                                        <img
+                                                            src={product.image_url || '/placeholder.png'}
+                                                            alt={product.name}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => { (e.target as HTMLImageElement).src = '/logo.png'; }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-[0.88rem] font-700 text-brand-text truncate">{product.name}</div>
+                                                        <div className="text-[0.75rem] text-gray-400 flex items-center gap-2">
+                                                            {product.categories?.name && <span className="bg-brand-green/10 text-brand-green px-1.5 py-0.5 rounded text-[0.65rem] font-700 uppercase">{product.categories.name}</span>}
+                                                            <span className="font-600 text-brand-text">Rs. {product.price.toLocaleString()}</span>
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                            <div className="border-t border-black/5 mt-1 p-2">
+                                                <button
+                                                    onClick={() => handleSearch()}
+                                                    className="w-full py-2 text-[0.78rem] font-700 text-brand-green text-center hover:bg-brand-green-light/30 rounded-lg transition-colors border-none bg-transparent cursor-pointer"
+                                                >
+                                                    View all results for "{searchQuery}"
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <Link to="/cart" className="relative text-secondary flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 border border-black/8 transition-all duration-200 hover:text-brand-green hover:bg-brand-green-light hover:border-brand-green">
@@ -132,7 +229,54 @@ const Header: React.FC = () => {
                     <X size={24} />
                 </button>
 
-                <div className="flex flex-col gap-1 mt-4">
+                {/* Mobile Search in Drawer */}
+                <div className="relative mt-2 mb-6">
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-black/8 bg-brand-bg focus-within:border-brand-green transition-all">
+                        <input
+                            type="text"
+                            placeholder="Search products..."
+                            className="bg-transparent border-none text-brand-text outline-none w-full text-[0.95rem]"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            onFocus={() => searchQuery.trim().length >= 2 && setShowSuggestions(true)}
+                        />
+                        <Search size={20} className="text-gray-400" onClick={() => handleSearch()} />
+                    </div>
+                    {/* Drawer Suggestion Dropdown */}
+                    {showSuggestions && suggestions.length > 0 && (
+                        <div className="absolute top-full left-0 w-full mt-1 bg-white border border-black/8 rounded-xl shadow-xl z-[2001] overflow-hidden">
+                            <div className="p-1">
+                                {suggestions.map((product) => (
+                                    <button
+                                        key={product.id}
+                                        onClick={() => {
+                                            navigate(`/product/${product.id}`);
+                                            setShowSuggestions(false);
+                                            setSearchQuery('');
+                                            closeMenu();
+                                        }}
+                                        className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-green-light/30 transition-colors text-left border-none bg-transparent cursor-pointer"
+                                    >
+                                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 border border-black/5">
+                                            <img
+                                                src={product.image_url || '/placeholder.png'}
+                                                alt={product.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-[0.85rem] font-700 text-brand-text truncate">{product.name}</div>
+                                            <div className="text-[0.7rem] text-brand-green font-600">Rs. {product.price.toLocaleString()}</div>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex flex-col gap-1 mt-0">
                     {[
                         { name: 'Home', path: '/' },
                         { name: 'Products', path: '/shop' },
