@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import CartSuccessModal from './CartSuccessModal';
+import WhatsAppFAB from './WhatsAppFAB';
 
 const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (
@@ -13,6 +14,7 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             </main>
             <Footer />
             <CartSuccessModal />
+            <WhatsAppFAB />
         </div>
     );
 };

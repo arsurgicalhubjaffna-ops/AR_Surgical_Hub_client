@@ -196,6 +196,28 @@ const AdminSettings: React.FC = () => {
                                                         />
                                                     </div>
                                                 </div>
+                                            ) : setting.field_type === 'toggle' ? (
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={() => {
+                                                            const currentVal = editValues[setting.id] ?? setting.value;
+                                                            const nextVal = currentVal === 'true' ? 'false' : 'true';
+                                                            handleChange(setting.id, nextVal);
+                                                        }}
+                                                        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none ${
+                                                            (editValues[setting.id] ?? setting.value) === 'true' ? 'bg-brand-green' : 'bg-gray-200'
+                                                        }`}
+                                                    >
+                                                        <span
+                                                            className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                                                                (editValues[setting.id] ?? setting.value) === 'true' ? 'translate-x-6' : 'translate-x-1'
+                                                            }`}
+                                                        />
+                                                    </button>
+                                                    <span className="text-sm font-600 text-gray-500 uppercase tracking-tighter">
+                                                        {(editValues[setting.id] ?? setting.value) === 'true' ? 'Enabled' : 'Disabled'}
+                                                    </span>
+                                                </div>
                                             ) : (
                                                 <input
                                                     type="text"

@@ -104,7 +104,7 @@ export interface Setting {
     value: string;
     description?: string;
     settings_group: string;
-    field_type: 'text' | 'textarea' | 'number' | 'boolean' | 'image';
+    field_type: 'text' | 'textarea' | 'number' | 'boolean' | 'image' | 'toggle';
     updated_at: string;
 }
 
