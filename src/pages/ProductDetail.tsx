@@ -57,7 +57,7 @@ const ProductDetail: React.FC = () => {
     const handleReviewSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) {
-            alert('Please login to leave a review.');
+            toast.error('Please login to leave a review.');
             return;
         }
         if (!id) return;

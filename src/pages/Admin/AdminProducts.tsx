@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search, Filter, Upload, Loader2 } from 'lucide-react';
+import ConfirmationModal from '../../components/Admin/ConfirmationModal';
 import { Product, Category, Subcategory } from '../../types';
 import ProductImage from '../../components/ProductImage';
 
@@ -17,6 +18,7 @@ const AdminProducts: React.FC = () => {
     const [editId, setEditId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [uploading, setUploading] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
     const load = async () => {
         try {
@@ -74,7 +76,7 @@ const AdminProducts: React.FC = () => {
             }
         } catch (err) {
             console.error('Upload Error:', err);
-            alert('Failed to upload image. Please try again.');
+            toast.error('Failed to upload image. Please try again.');
         } finally {
             setUploading(false);
         }
@@ -113,8 +115,7 @@ const AdminProducts: React.FC = () => {
         }
     };
 
-    const del = async (id: string) => {
-        if (!confirm('Permanently delete this product from the catalog?')) return;
+    const handleDelete = async (id: string) => {
         const { error } = await insforge.database.from('products').delete().eq('id', id);
         if (error) { 
             toast.error('Deletion failed');
@@ -218,7 +219,7 @@ const AdminProducts: React.FC = () => {
                                                 <Pencil size={16} />
                                             </button>
                                             <button
-                                                onClick={() => del(p.id)}
+                                                onClick={() => setConfirmDelete(p.id)}
                                                 className="p-2 text-brand-text-muted hover:text-brand-red hover:bg-brand-red/5 rounded-lg transition-all"
                                             >
                                                 <Trash2 size={16} />
@@ -380,6 +381,16 @@ const AdminProducts: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmationModal
+                isOpen={!!confirmDelete}
+                onClose={() => setConfirmDelete(null)}
+                onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
+                title="Delete Product?"
+                message="Are you sure you want to permanently delete this product from the catalog? This action cannot be undone."
+                confirmText="Delete Now"
+                variant="danger"
+            />
         </div>
     );
 };

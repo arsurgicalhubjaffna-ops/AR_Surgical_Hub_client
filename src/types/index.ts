@@ -19,6 +19,7 @@ export interface Subcategory {
     category_id: string;
     name: string;
     description?: string;
+    image_url?: string;
     categories?: {
         name: string;
     };
@@ -154,6 +155,7 @@ export interface Vacancy {
     department?: string;
     experience_level?: string;
     requirements?: string;
+    image_url?: string;
     created_at: string;
     updated_at?: string;
 }

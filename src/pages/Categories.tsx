@@ -48,16 +48,25 @@ const Categories: React.FC = () => {
                             <Link
                                 to={`/shop?category=${cat.id}`}
                                 key={cat.id}
-                                className="bg-white/70 backdrop-blur-md border border-black/8 p-8 md:p-10 rounded-[24px] flex flex-col gap-4 no-underline transition-all duration-300 hover:-translate-y-2 hover:border-brand-green hover:shadow-2xl group"
+                                className="bg-white/70 backdrop-blur-md border border-black/8 p-8 md:p-10 rounded-[32px] flex flex-col items-center text-center gap-6 no-underline transition-all duration-500 hover:-translate-y-2 hover:border-brand-green hover:shadow-2xl group overflow-hidden"
                             >
-                                <h3 className="text-brand-green text-xl md:text-2xl font-800 tracking-tight transition-colors group-hover:text-brand-green-dark">
-                                    {cat.name}
-                                </h3>
-                                <p className="text-secondary text-sm md:text-base leading-relaxed grow">
-                                    {cat.description || 'Quality surgical instruments designed for precision and reliability.'}
-                                </p>
-                                <span className="text-brand-green font-700 text-sm md:text-[0.9rem] flex items-center gap-1 mt-2">
-                                    Browse Collection <span className="transition-transform group-hover:translate-x-1">→</span>
+                                <div className="w-24 h-24 rounded-[24px] bg-brand-bg flex items-center justify-center border border-black/5 overflow-hidden shadow-inner group-hover:scale-110 transition-transform duration-500 p-4">
+                                    {cat.image_url ? (
+                                        <img src={cat.image_url} alt={cat.name} className="w-full h-full object-contain" />
+                                    ) : (
+                                        <div className="text-brand-green/20 font-900 text-4xl select-none">{cat.name.charAt(0)}</div>
+                                    )}
+                                </div>
+                                <div className="flex flex-col gap-3">
+                                    <h3 className="text-brand-text text-xl md:text-2xl font-800 tracking-tight transition-colors group-hover:text-brand-green">
+                                        {cat.name}
+                                    </h3>
+                                    <p className="text-secondary text-sm md:text-base leading-relaxed line-clamp-2">
+                                        {cat.description || 'Quality surgical instruments designed for precision and reliability.'}
+                                    </p>
+                                </div>
+                                <span className="text-brand-green font-700 text-sm md:text-[0.9rem] flex items-center justify-center gap-2 group-hover:gap-3 transition-all">
+                                    Browse Specialized Collection <span>→</span>
                                 </span>
                             </Link>
                         ))}

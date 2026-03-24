@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
-import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search, Upload, RefreshCw } from 'lucide-react';
+import ConfirmationModal from '../../components/Admin/ConfirmationModal';
 import { Category } from '../../types';
 
 const emptyForm = { name: '', description: '', image_url: '' };
@@ -13,6 +14,8 @@ const AdminCategories: React.FC = () => {
     const [form, setForm] = useState(emptyForm);
     const [editId, setEditId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
     const load = async () => {
         try {
@@ -30,6 +33,27 @@ const AdminCategories: React.FC = () => {
     };
 
     useEffect(() => { load(); }, []);
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const { data, error } = await insforge.storage
+                .from('site_assets')
+                .upload(`${Date.now()}_cat_${file.name}`, file);
+
+            if (error || !data) throw error || new Error('Upload failed');
+            setForm(prev => ({ ...prev, image_url: data.url }));
+            toast.success('Icon uploaded successfully');
+        } catch (err) {
+            console.error('Upload Error:', err);
+            toast.error('Failed to upload icon');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const openAdd = () => { setForm(emptyForm); setEditId(null); setModal(true); };
     const openEdit = (c: Category) => {
@@ -52,29 +76,29 @@ const AdminCategories: React.FC = () => {
                     .update(payload)
                     .eq('id', editId);
                 if (error) throw error;
+                toast.success('Classification refined successfully');
             } else {
                 const { error } = await insforge.database
                     .from('categories')
                     .insert([payload]);
                 if (error) throw error;
+                toast.success('New category registered in system');
             }
             setModal(false);
             load();
-            toast.success(editId ? 'Classification refined' : 'New category registered');
         } catch (err) {
             toast.error('System registry update failed');
         }
     };
 
-    const del = async (id: string) => {
-        if (!confirm('Delete this classification? Associated products will remain but will lose this grouping.')) return;
+    const handleDelete = async (id: string) => {
         try {
             const { error } = await insforge.database.from('categories').delete().eq('id', id);
             if (error) throw error;
             toast.success('Classification deleted from registry');
             load();
         } catch (err) {
-            toast.error('Purge failed');
+            toast.error('Database purge failed');
         }
     };
 
@@ -141,7 +165,7 @@ const AdminCategories: React.FC = () => {
                                                 <Pencil size={16} />
                                             </button>
                                             <button
-                                                onClick={() => del(c.id)}
+                                                onClick={() => setConfirmDelete(c.id)}
                                                 className="p-2 text-gray-400 hover:text-brand-red hover:bg-brand-red/5 rounded-lg transition-all"
                                             >
                                                 <Trash2 size={16} />
@@ -198,18 +222,35 @@ const AdminCategories: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Icon Asset URL</label>
-                                <div className="flex gap-4 items-center">
+                                <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Category Asset (Icon/Image)</label>
+                                <div className="space-y-4">
+                                    <div className="flex gap-4 items-center">
+                                        <label className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-700 text-sm cursor-pointer transition-all ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white border border-black/10 text-brand-text hover:bg-brand-bg shadow-sm'}`}>
+                                            {uploading ? (
+                                                <RefreshCw size={16} className="animate-spin text-brand-green" />
+                                            ) : (
+                                                <Upload size={16} />
+                                            )}
+                                            {uploading ? 'Uploading...' : 'Click to upload icon'}
+                                            <input 
+                                                type="file" 
+                                                className="hidden" 
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                disabled={uploading}
+                                            />
+                                        </label>
+                                        <div className="w-12 h-12 rounded-xl bg-brand-bg flex items-center justify-center border border-black/5 shrink-0 overflow-hidden shadow-inner">
+                                            {form.image_url ? <img src={form.image_url} className="w-full h-full object-contain p-2" /> : <ImageIcon size={20} className="text-gray-300" />}
+                                        </div>
+                                    </div>
                                     <input
                                         type="text"
-                                        className="flex-1 bg-brand-bg border border-black/5 rounded-xl px-4 py-3 outline-none focus:border-brand-green font-500 text-[0.85rem] text-secondary"
-                                        placeholder="https://icons.arsurgical.com/..."
+                                        className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-3 outline-none focus:border-brand-green font-500 text-[0.75rem] text-secondary"
+                                        placeholder="Or paste asset URL manually..."
                                         value={form.image_url}
                                         onChange={e => setForm({ ...form, image_url: e.target.value })}
                                     />
-                                    <div className="w-12 h-12 rounded-xl bg-brand-bg flex items-center justify-center border border-black/5 shrink-0 overflow-hidden">
-                                        {form.image_url ? <img src={form.image_url} className="w-full h-full object-contain p-2" /> : <ImageIcon size={20} className="text-gray-300" />}
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -232,6 +273,16 @@ const AdminCategories: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmationModal
+                isOpen={!!confirmDelete}
+                onClose={() => setConfirmDelete(null)}
+                onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
+                title="Delete Category?"
+                message="Are you sure you want to remove this category? Associated products will remain but will lose this classification."
+                confirmText="Delete Now"
+                variant="danger"
+            />
         </div>
     );
 };

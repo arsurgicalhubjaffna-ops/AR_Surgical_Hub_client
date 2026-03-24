@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
 import { WarrantyClaim } from '../../types';
 import {
@@ -44,9 +45,10 @@ const AdminWarranty: React.FC = () => {
                 .update(updateData)
                 .eq('id', id);
             if (error) throw error;
+            toast.success(`Claim status updated to ${status.replace('_', ' ')}`);
             load();
         } catch (err) {
-            alert('Failed to update warranty status');
+            toast.error('Failed to update warranty status');
         }
     };
 
@@ -63,12 +65,13 @@ const AdminWarranty: React.FC = () => {
                 .update(updateData)
                 .eq('id', selectedClaim.id);
             if (error) throw error;
+            toast.success('Claim details updated successfully');
             setSelectedClaim(null);
             setAdminNotes('');
             setResolution('');
             load();
         } catch (err) {
-            alert('Failed to update claim details');
+            toast.error('Failed to update claim details');
         } finally {
             setUpdating(false);
         }

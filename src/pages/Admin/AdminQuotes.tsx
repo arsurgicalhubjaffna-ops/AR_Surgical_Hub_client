@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
 import { MessageSquare, ChevronDown, CheckCircle, Clock, XCircle, User, Mail, Calendar } from 'lucide-react';
 
@@ -37,9 +38,10 @@ const AdminQuotes: React.FC = () => {
                 .update({ status })
                 .eq('id', id);
             if (error) throw error;
+            toast.success(`Quote status updated to ${status}`);
             load();
         } catch (err) {
-            alert('Failed to update quote status');
+            toast.error('Failed to update quote status');
         }
     };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import insforge from '../../lib/insforge';
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search, CheckCircle2, Globe, FileText, ToggleLeft, ToggleRight, Upload, RefreshCw, User } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/Admin/ConfirmationModal';
 import ProductImage from '../../components/ProductImage';
 import { Blog } from '../../types';
 
@@ -23,6 +24,7 @@ const AdminBlogs: React.FC = () => {
     const [editId, setEditId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [uploading, setUploading] = useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
     const load = async () => {
         try {
@@ -112,8 +114,7 @@ const AdminBlogs: React.FC = () => {
         }
     };
 
-    const del = async (id: string) => {
-        if (!confirm('Delete this blog post?')) return;
+    const handleDelete = async (id: string) => {
         try {
             const { error } = await insforge.database.from('blogs').delete().eq('id', id);
             if (error) throw error;
@@ -241,7 +242,7 @@ const AdminBlogs: React.FC = () => {
                                                 <Pencil size={16} />
                                             </button>
                                             <button
-                                                onClick={() => del(b.id)}
+                                                onClick={() => setConfirmDelete(b.id)}
                                                 className="p-2 text-gray-400 hover:text-brand-red hover:bg-brand-red/5 rounded-lg transition-all"
                                             >
                                                 <Trash2 size={16} />
@@ -430,6 +431,16 @@ const AdminBlogs: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmationModal
+                isOpen={!!confirmDelete}
+                onClose={() => setConfirmDelete(null)}
+                onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
+                title="Delete Blog Post?"
+                message="Are you sure you want to permanently delete this blog post? This action cannot be undone."
+                confirmText="Delete Now"
+                variant="danger"
+            />
         </div>
     );
 };

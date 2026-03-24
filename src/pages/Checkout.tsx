@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../hooks/useSettings';
@@ -24,7 +25,7 @@ const Checkout: React.FC = () => {
     const handleCheckout = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) {
-            alert('Please login to complete your order.');
+            toast.error('Please login to complete your order.');
             navigate('/login');
             return;
         }
@@ -45,12 +46,12 @@ const Checkout: React.FC = () => {
                 // We want to avoid that confusing error message if the main order exists.
             }
 
-            alert('Order placed successfully!');
+            toast.success('Order placed successfully!');
             clearCart();
             navigate('/');
         } catch (err) {
             console.error('Checkout error:', err);
-            alert('Failed to place order. Please try again.');
+            toast.error('Failed to place order. Please try again.');
         } finally {
             setLoading(false);
         }

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
 import { Plus, Pencil, Trash2, X, Search, GitBranch } from 'lucide-react';
+import ConfirmationModal from '../../components/Admin/ConfirmationModal';
 import { Category, Subcategory } from '../../types';
 
-const emptyForm = { name: '', description: '', category_id: '' };
+const emptyForm = { name: '', description: '', category_id: '', image_url: '' };
 
 const AdminSubcategories: React.FC = () => {
     const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -13,6 +15,8 @@ const AdminSubcategories: React.FC = () => {
     const [form, setForm] = useState(emptyForm);
     const [editId, setEditId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
     const load = async () => {
         try {
@@ -38,10 +42,32 @@ const AdminSubcategories: React.FC = () => {
     useEffect(() => { load(); }, []);
 
     const openAdd = () => { setForm(emptyForm); setEditId(null); setModal(true); };
-    const openEdit = (s: any) => {
-        setForm({ name: s.name, description: s.description || '', category_id: s.category_id });
+    const openEdit = (s: Subcategory) => {
+        setForm({ name: s.name, description: s.description || '', category_id: s.category_id, image_url: (s as any).image_url || '' });
         setEditId(s.id);
         setModal(true);
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const fileName = `${Date.now()}_sub_${file.name.replace(/\s+/g, '_')}`;
+            const { data, error } = await insforge.storage
+                .from('site_assets')
+                .upload(`subcategories/${fileName}`, file);
+
+            if (error || !data) throw error || new Error('Upload failed');
+            setForm(prev => ({ ...prev, image_url: data.url }));
+            toast.success('Icon uploaded successfully');
+        } catch (err) {
+            console.error('Upload Error:', err);
+            toast.error('Failed to upload icon. Please try again.');
+        } finally {
+            setUploading(false);
+        }
     };
 
     const save = async () => {
@@ -50,6 +76,7 @@ const AdminSubcategories: React.FC = () => {
                 name: form.name,
                 description: form.description || null,
                 category_id: form.category_id,
+                image_url: form.image_url || null,
             };
 
             if (editId) {
@@ -58,27 +85,29 @@ const AdminSubcategories: React.FC = () => {
                     .update(payload)
                     .eq('id', editId);
                 if (error) throw error;
+                toast.success('Sub-classification updated');
             } else {
                 const { error } = await insforge.database
                     .from('subcategories')
                     .insert([payload]);
                 if (error) throw error;
+                toast.success('New sub-classification registered');
             }
             setModal(false);
             load();
         } catch (err) {
-            alert('Failed to save subcategory');
+            toast.error('Failed to save sub-classification');
         }
     };
 
-    const del = async (id: string) => {
-        if (!confirm('Delete this sub-class? Associated products will remain but will lose this grouping.')) return;
+    const handleDelete = async (id: string) => {
         try {
             const { error } = await insforge.database.from('subcategories').delete().eq('id', id);
             if (error) throw error;
+            toast.success('Sub-classification removed');
             load();
         } catch (err) {
-            alert('Failed to delete subcategory');
+            toast.error('Purge failed');
         }
     };
 
@@ -128,8 +157,12 @@ const AdminSubcategories: React.FC = () => {
                             {filtered.map((s: any) => (
                                 <tr key={s.id} className="hover:bg-brand-bg/30 transition-colors group">
                                     <td className="px-8 py-5">
-                                        <div className="w-10 h-10 bg-brand-bg rounded-lg flex items-center justify-center border border-black/5 text-brand-green shadow-inner">
-                                            <GitBranch size={18} />
+                                        <div className="w-12 h-12 bg-brand-bg rounded-xl flex items-center justify-center border border-black/5 text-brand-green shadow-inner overflow-hidden">
+                                            {s.image_url ? (
+                                                <img src={s.image_url} alt="" className="w-full h-full object-contain" />
+                                            ) : (
+                                                <GitBranch size={20} />
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-8 py-5">
@@ -152,7 +185,7 @@ const AdminSubcategories: React.FC = () => {
                                                 <Pencil size={16} />
                                             </button>
                                             <button
-                                                onClick={() => del(s.id)}
+                                                onClick={() => setConfirmDelete(s.id)}
                                                 className="p-2 text-gray-400 hover:text-brand-red hover:bg-brand-red/5 rounded-lg transition-all"
                                             >
                                                 <Trash2 size={16} />
@@ -188,7 +221,35 @@ const AdminSubcategories: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="p-8 flex flex-col gap-6">
+                        <div className="p-8 flex flex-col gap-6 max-h-[60vh] overflow-y-auto no-scrollbar">
+                            {/* Image Upload Component */}
+                            <div className="flex flex-col items-center">
+                                <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-4 w-full">Visual Identification</label>
+                                <div className="relative group w-24 h-24">
+                                    <div className="w-full h-full rounded-2xl bg-brand-bg border-2 border-dashed border-black/5 flex items-center justify-center overflow-hidden transition-all group-hover:border-brand-green/30 relative">
+                                        {form.image_url ? (
+                                            <img src={form.image_url} alt="Sub-Class Preview" className="w-full h-full object-contain p-2" />
+                                        ) : (
+                                            <div className="text-center p-2">
+                                                <GitBranch size={20} className="mx-auto text-gray-300 mb-1" />
+                                                <span className="text-[10px] font-700 text-gray-400 uppercase">No Media</span>
+                                            </div>
+                                        )}
+
+                                        {uploading && (
+                                            <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                                                <div className="w-5 h-5 border-2 border-brand-green border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <label className="absolute -bottom-2 -right-2 w-8 h-8 bg-white border border-black/8 rounded-lg flex items-center justify-center cursor-pointer shadow-lg hover:bg-brand-bg transition-all hover:scale-110 z-10">
+                                        <Plus size={16} className="text-brand-green" />
+                                        <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                                    </label>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-3 font-600 uppercase tracking-widest">Set representative icon</p>
+                            </div>
+
                             <div>
                                 <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Parent Classification</label>
                                 <select
@@ -197,7 +258,7 @@ const AdminSubcategories: React.FC = () => {
                                     onChange={e => setForm({ ...form, category_id: e.target.value })}
                                 >
                                     <option value="" disabled>Select Parent Category</option>
-                                    {categories.map(c => (
+                                    {categories.map((c: any) => (
                                         <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </select>
@@ -215,10 +276,20 @@ const AdminSubcategories: React.FC = () => {
                             <div>
                                 <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">System Definition</label>
                                 <textarea
-                                    className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-3 outline-none focus:border-brand-green font-500 text-brand-text min-h-[100px] resize-none"
+                                    className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-3 outline-none focus:border-brand-green font-500 text-brand-text min-h-[80px] resize-none"
                                     value={form.description}
                                     onChange={e => setForm({ ...form, description: e.target.value })}
                                     placeholder="Describe the therapeutic or procedural scope..."
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Media URL (Manual)</label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-3 outline-none focus:border-brand-green font-500 text-[0.7rem] text-secondary"
+                                    value={form.image_url}
+                                    onChange={e => setForm({ ...form, image_url: e.target.value })}
+                                    placeholder="https://..."
                                 />
                             </div>
                         </div>
@@ -241,6 +312,16 @@ const AdminSubcategories: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmationModal
+                isOpen={!!confirmDelete}
+                onClose={() => setConfirmDelete(null)}
+                onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
+                title="Delete Subcategory?"
+                message="Are you sure you want to remove this sub-class? Associated products will remain but will lose this grouping."
+                confirmText="Delete Now"
+                variant="danger"
+            />
         </div>
     );
 };

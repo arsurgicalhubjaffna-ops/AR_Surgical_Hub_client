@@ -5,6 +5,7 @@ import insforge from '../lib/insforge';
 import { Order, OrderItem, Product } from '../types';
 import { useAuth } from '../context/AuthContext';
 import ProductImage from '../components/ProductImage';
+import toast from 'react-hot-toast';
 
 const CLAIM_TYPES = [
     { value: 'defective', label: 'Defective Unit', desc: 'Product has manufacturing defects' },
@@ -145,7 +146,7 @@ const WarrantyClaimForm: React.FC = () => {
             setReceiptUrl(publicUrl);
         } catch (err) {
             console.error('Upload error:', err);
-            alert('Failed to upload receipt image');
+            toast.error('Failed to upload receipt image');
         } finally {
             setUploading(false);
         }
@@ -153,17 +154,17 @@ const WarrantyClaimForm: React.FC = () => {
 
     const handleSubmit = async () => {
         if (!user || !selectedProductId || !claimType || !description.trim()) {
-            alert('Please fill in all required fields');
+            toast.error('Please fill in all required fields');
             return;
         }
 
         if (purchaseType === 'online' && !selectedOrderId) {
-            alert('Please select an order');
+            toast.error('Please select an order');
             return;
         }
 
         if (purchaseType === 'instore' && !receiptNumber) {
-            alert('Please provide a receipt number');
+            toast.error('Please provide a receipt number');
             return;
         }
 
@@ -185,10 +186,11 @@ const WarrantyClaimForm: React.FC = () => {
                 }]);
 
             if (error) throw error;
+            toast.success('Warranty claim submitted successfully');
             navigate('/my-warranty');
         } catch (err: any) {
             console.error('Submit error:', err);
-            alert('Failed to submit warranty claim. Please try again.');
+            toast.error('Failed to submit warranty claim. Please try again.');
         } finally {
             setSubmitting(false);
         }

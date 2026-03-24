@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import insforge from '../../lib/insforge';
 import { 
     Plus, Pencil, Trash2, X, Search, CheckCircle2, Briefcase, MapPin, 
     DollarSign, Clock, ToggleLeft, ToggleRight, AlertTriangle, 
     Filter, ChevronDown, Layers, Target, BookOpen, User, Mail, Phone, FileText, ExternalLink, Loader2
 } from 'lucide-react';
+import ConfirmationModal from '../../components/Admin/ConfirmationModal';
 import { Vacancy, JobApplication } from '../../types';
 import { loadVacancies, saveVacancy, deleteVacancy, toggleVacancyStatus, loadApplications, updateApplicationStatus } from './AdminCareersHandler';
 
@@ -16,7 +19,8 @@ const emptyForm: Omit<Vacancy, 'id' | 'created_at' | 'updated_at'> = {
     type: 'Full-Time',
     department: 'General',
     experience_level: 'Intermediate',
-    requirements: ''
+    requirements: '',
+    image_url: ''
 };
 
 const JOB_TYPES = ['Full-Time', 'Part-Time', 'Contract', 'Internship', 'Freelance'];
@@ -35,6 +39,8 @@ const AdminCareers: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
     const load = async () => {
         setLoading(true);
@@ -66,10 +72,33 @@ const AdminCareers: React.FC = () => {
             type: v.type || 'Full-Time',
             department: v.department || 'General',
             experience_level: v.experience_level || 'Intermediate',
-            requirements: v.requirements || ''
+            requirements: v.requirements || '',
+            image_url: v.image_url || ''
         });
         setEditId(v.id);
         setModal(true);
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const fileName = `${Date.now()}_vac_${file.name.replace(/\s+/g, '_')}`;
+            const { data, error } = await insforge.storage
+                .from('site_assets')
+                .upload(`vacancies/${fileName}`, file);
+
+            if (error || !data) throw error || new Error('Upload failed');
+            setForm(prev => ({ ...prev, image_url: data.url }));
+            toast.success('Position icon uploaded');
+        } catch (err) {
+            console.error('Upload Error:', err);
+            toast.error('Failed to upload icon');
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleSave = async () => {
@@ -77,27 +106,29 @@ const AdminCareers: React.FC = () => {
             await saveVacancy(form as any, editId);
             setModal(false);
             load();
+            toast.success(editId ? 'Vacancy updated successfully' : 'New vacancy published');
         } catch (err) {
-            alert('Failed to save vacancy');
+            toast.error('Failed to save vacancy');
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this vacancy?')) return;
         try {
             await deleteVacancy(id);
+            toast.success('Vacancy removed from listings');
             load();
         } catch (err) {
-            alert('Failed to delete vacancy');
+            toast.error('Failed to delete vacancy');
         }
     };
 
     const handleToggleStatus = async (v: Vacancy) => {
         try {
             await toggleVacancyStatus(v.id, !v.is_active);
+            toast.success(`Vacancy is now ${!v.is_active ? 'active' : 'closed'}`);
             load();
         } catch (err) {
-            alert('Failed to toggle vacancy status');
+            toast.error('Failed to update vacancy status');
         }
     };
 
@@ -105,9 +136,10 @@ const AdminCareers: React.FC = () => {
         setUpdatingStatus(id);
         try {
             await updateApplicationStatus(id, status);
+            toast.success(`Application status updated to ${status}`);
             load();
         } catch (err) {
-            alert('Failed to update application status');
+            toast.error('Failed to update application status');
         } finally {
             setUpdatingStatus(null);
         }
@@ -261,8 +293,12 @@ const AdminCareers: React.FC = () => {
                                     <tr key={v.id} className="hover:bg-brand-bg/30 transition-colors group">
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 bg-brand-bg rounded-lg border border-black/5 flex items-center justify-center shrink-0">
-                                                    <Briefcase size={20} className="text-brand-green" />
+                                                <div className="w-12 h-12 bg-brand-bg rounded-xl border border-black/5 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+                                                    {v.image_url ? (
+                                                        <img src={v.image_url} alt="" className="w-full h-full object-contain p-2" />
+                                                    ) : (
+                                                        <Briefcase size={20} className="text-brand-green" />
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <h3 className="font-800 text-brand-text text-sm hover:text-brand-green transition-colors line-clamp-1">{v.position}</h3>
@@ -309,7 +345,7 @@ const AdminCareers: React.FC = () => {
                                                     <Pencil size={16} />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDelete(v.id)}
+                                                    onClick={() => setConfirmDelete(v.id)}
                                                     className="p-2 text-gray-400 hover:text-brand-red hover:bg-brand-red/5 rounded-lg transition-all"
                                                 >
                                                     <Trash2 size={16} />
@@ -444,122 +480,166 @@ const AdminCareers: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="p-8 flex-1 overflow-y-auto flex flex-col gap-6 no-scrollbar">
-                            {/* Row 1: Position & Dept */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Position Title <span className="text-brand-red">*</span></label>
-                                    <div className="relative">
-                                        <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                                        <input
-                                            type="text"
-                                            className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-700 text-brand-text"
-                                            value={form.position}
-                                            onChange={e => setForm({ ...form, position: e.target.value })}
-                                            placeholder="e.g. Senior Surgical Consultant"
+                        <div className="p-8 flex-1 overflow-y-auto no-scrollbar">
+                            <div className="flex flex-col gap-8">
+                                {/* Image Upload Component */}
+                                <div className="flex flex-col items-center">
+                                    <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-4 w-full text-center">Visual Representation</label>
+                                    <div className="relative group w-24 h-24">
+                                        <div className="w-full h-full rounded-[24px] bg-brand-bg border-2 border-dashed border-black/5 flex items-center justify-center overflow-hidden transition-all group-hover:border-brand-green/30 relative">
+                                            {form.image_url ? (
+                                                <img src={form.image_url} alt="Vacancy Preview" className="w-full h-full object-contain p-3" />
+                                            ) : (
+                                                <div className="text-center p-3">
+                                                    <Briefcase size={20} className="mx-auto text-gray-300 mb-1" />
+                                                    <span className="text-[10px] font-700 text-gray-400 uppercase">No Icon</span>
+                                                </div>
+                                            )}
+
+                                            {uploading && (
+                                                <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                                                    <div className="w-6 h-6 border-2 border-brand-green border-t-transparent rounded-full animate-spin"></div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <label className="absolute -bottom-2 -right-2 w-9 h-9 bg-white border border-black/8 rounded-xl flex items-center justify-center cursor-pointer shadow-lg hover:bg-brand-bg transition-all hover:scale-110 z-10">
+                                            <Plus size={18} className="text-brand-green" />
+                                            <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                                        </label>
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 mt-4 font-600 uppercase tracking-widest">Set role-specific symbol</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-6">
+                                    {/* Row 1: Position & Dept */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Position Title <span className="text-brand-red">*</span></label>
+                                            <div className="relative">
+                                                <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                                <input
+                                                    type="text"
+                                                    className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-700 text-brand-text"
+                                                    value={form.position}
+                                                    onChange={e => setForm({ ...form, position: e.target.value })}
+                                                    placeholder="e.g. Senior Surgical Consultant"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Department</label>
+                                            <div className="relative">
+                                                <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                                <select
+                                                    className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none"
+                                                    value={form.department}
+                                                    onChange={e => setForm({ ...form, department: e.target.value })}
+                                                >
+                                                    {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                                                </select>
+                                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Row 2: Location & Salary */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Location</label>
+                                            <div className="relative">
+                                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                                <input
+                                                    type="text"
+                                                    className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-500 text-brand-text"
+                                                    value={form.location}
+                                                    onChange={e => setForm({ ...form, location: e.target.value })}
+                                                    placeholder="e.g. Colombo, Sri Lanka / Remote"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Salary Range</label>
+                                            <div className="relative">
+                                                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                                <input
+                                                    type="text"
+                                                    className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-500 text-brand-text"
+                                                    value={form.salary_range}
+                                                    onChange={e => setForm({ ...form, salary_range: e.target.value })}
+                                                    placeholder="e.g. Rs. 150,000 - 250,000"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Row 3: Type & Level */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Job Type</label>
+                                            <div className="relative">
+                                                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                                <select
+                                                    className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none"
+                                                    value={form.type}
+                                                    onChange={e => setForm({ ...form, type: e.target.value })}
+                                                >
+                                                    {JOB_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                                                </select>
+                                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Experience Level</label>
+                                            <div className="relative">
+                                                <Target className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                                <select
+                                                    className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none"
+                                                    value={form.experience_level}
+                                                    onChange={e => setForm({ ...form, experience_level: e.target.value })}
+                                                >
+                                                    {EXPERIENCE_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                                                </select>
+                                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Row 4: Description */}
+                                    <div>
+                                        <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Job Description <span className="text-brand-red">*</span></label>
+                                        <textarea
+                                            className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-4 outline-none focus:border-brand-green font-500 text-brand-text min-h-[150px] resize-y"
+                                            value={form.description}
+                                            onChange={e => setForm({ ...form, description: e.target.value })}
+                                            placeholder="Provide a general overview of the role..."
                                             required
                                         />
                                     </div>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Department</label>
-                                    <div className="relative">
-                                        <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                                        <select
-                                            className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none"
-                                            value={form.department}
-                                            onChange={e => setForm({ ...form, department: e.target.value })}
-                                        >
-                                            {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                                        </select>
-                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-                                    </div>
-                                </div>
-                            </div>
 
-                            {/* Row 2: Location & Salary */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Location</label>
-                                    <div className="relative">
-                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                    {/* Row 5: Requirements */}
+                                    <div>
+                                        <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Requirements / Qualifications</label>
+                                        <textarea
+                                            className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-4 outline-none focus:border-brand-green font-500 text-brand-text min-h-[150px] resize-y"
+                                            value={form.requirements}
+                                            onChange={e => setForm({ ...form, requirements: e.target.value })}
+                                            placeholder="List key requirements, one per line..."
+                                        />
+                                    </div>
+
+                                    {/* Row 6: Media Asset URL */}
+                                    <div>
+                                        <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Media Asset URL (Manual)</label>
                                         <input
                                             type="text"
-                                            className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-500 text-brand-text"
-                                            value={form.location}
-                                            onChange={e => setForm({ ...form, location: e.target.value })}
-                                            placeholder="e.g. Colombo, Sri Lanka / Remote"
+                                            className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-3 outline-none focus:border-brand-green font-500 text-[0.7rem] text-secondary"
+                                            value={form.image_url}
+                                            onChange={e => setForm({ ...form, image_url: e.target.value })}
+                                            placeholder="https://..."
                                         />
                                     </div>
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Salary Range</label>
-                                    <div className="relative">
-                                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                                        <input
-                                            type="text"
-                                            className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-500 text-brand-text"
-                                            value={form.salary_range}
-                                            onChange={e => setForm({ ...form, salary_range: e.target.value })}
-                                            placeholder="e.g. Rs. 150,000 - 250,000"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Row 3: Type & Level */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Job Type</label>
-                                    <div className="relative">
-                                        <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                                        <select
-                                            className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none"
-                                            value={form.type}
-                                            onChange={e => setForm({ ...form, type: e.target.value })}
-                                        >
-                                            {JOB_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                                        </select>
-                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Experience Level</label>
-                                    <div className="relative">
-                                        <Target className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                                        <select
-                                            className="w-full bg-brand-bg border border-black/5 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-brand-green font-600 text-brand-text appearance-none"
-                                            value={form.experience_level}
-                                            onChange={e => setForm({ ...form, experience_level: e.target.value })}
-                                        >
-                                            {EXPERIENCE_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
-                                        </select>
-                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Row 4: Description */}
-                            <div>
-                                <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Job Description <span className="text-brand-red">*</span></label>
-                                <textarea
-                                    className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-4 outline-none focus:border-brand-green font-500 text-brand-text min-h-[150px] resize-y"
-                                    value={form.description}
-                                    onChange={e => setForm({ ...form, description: e.target.value })}
-                                    placeholder="Provide a general overview of the role..."
-                                    required
-                                />
-                            </div>
-
-                            {/* Row 5: Requirements */}
-                            <div>
-                                <label className="block text-xs font-800 text-gray-400 uppercase tracking-widest mb-2">Requirements / Qualifications</label>
-                                <textarea
-                                    className="w-full bg-brand-bg border border-black/5 rounded-xl px-4 py-4 outline-none focus:border-brand-green font-500 text-brand-text min-h-[150px] resize-y"
-                                    value={form.requirements}
-                                    onChange={e => setForm({ ...form, requirements: e.target.value })}
-                                    placeholder="List key requirements, one per line..."
-                                />
                             </div>
                         </div>
 
@@ -581,6 +661,16 @@ const AdminCareers: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmationModal
+                isOpen={!!confirmDelete}
+                onClose={() => setConfirmDelete(null)}
+                onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
+                title="Delete Vacancy?"
+                message="Are you sure you want to remove this job vacancy? This action cannot be undone."
+                confirmText="Delete Now"
+                variant="danger"
+            />
         </div>
     );
 };

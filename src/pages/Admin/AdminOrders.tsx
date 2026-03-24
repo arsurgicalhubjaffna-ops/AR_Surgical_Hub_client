@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
 import { ClipboardList, ChevronDown, CheckCircle, Clock, Truck, XCircle, Eye, X, Package, MapPin, CreditCard } from 'lucide-react';
 import ProductImage from '../../components/ProductImage';
@@ -188,9 +189,10 @@ const AdminOrders: React.FC = () => {
                 .update({ status })
                 .eq('id', id);
             if (error) throw error;
+            toast.success(`Order status updated to ${status}`);
             load();
         } catch (err) {
-            alert('Failed to update order status');
+            toast.error('Failed to update order status');
         }
     };
 
