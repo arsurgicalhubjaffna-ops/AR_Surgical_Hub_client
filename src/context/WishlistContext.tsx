@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
+import toast from 'react-hot-toast';
 import { Product } from '../types';
 
 interface WishlistContextType {
@@ -16,8 +17,10 @@ export const WishlistProvider: React.FC<{ children: ReactNode }> = ({ children }
         setWishlist((prev) => {
             const exists = prev.find(item => item.id === product.id);
             if (exists) {
+                toast.success('Removed from wishlist');
                 return prev.filter(item => item.id !== product.id);
             }
+            toast.success('Added to wishlist');
             return [...prev, product];
         });
     };

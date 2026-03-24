@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import CartSuccessModal from './CartSuccessModal';
 
 const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (
@@ -11,6 +12,7 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                 {children}
             </main>
             <Footer />
+            <CartSuccessModal />
         </div>
     );
 };

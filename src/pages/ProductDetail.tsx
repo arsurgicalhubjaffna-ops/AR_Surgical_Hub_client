@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useParams, Link } from 'react-router-dom';
 import insforge from '../lib/insforge';
 import { ShoppingCart, Heart, Shield, CheckCircle, Star } from 'lucide-react';
@@ -70,10 +71,12 @@ const ProductDetail: React.FC = () => {
                 comment: newReviewComment
             }]);
             if (error) throw error;
+            toast.success('Review submitted successfully!');
             setNewReviewComment('');
             setNewReviewRating(5);
             fetchDetails(); // Refresh reviews
         } catch (err) {
+            toast.error('Failed to submit review.');
             setReviewError('Failed to submit review.');
         } finally {
             setReviewLoading(false);

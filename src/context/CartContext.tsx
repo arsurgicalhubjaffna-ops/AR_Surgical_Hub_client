@@ -8,12 +8,17 @@ interface CartContextType {
     clearCart: () => void;
     cartTotal: number;
     cartCount: number;
+    showSuccessModal: boolean;
+    setShowSuccessModal: (show: boolean) => void;
+    lastAddedProduct: Product | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [lastAddedProduct, setLastAddedProduct] = useState<Product | null>(null);
 
     const addToCart = (product: Product) => {
         setCart((prevCart) => {
@@ -25,6 +30,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return [...prevCart, { ...product, quantity: 1 }];
         });
+        setLastAddedProduct(product);
+        setShowSuccessModal(true);
     };
 
     const removeFromCart = (productId: string) => {
@@ -39,7 +46,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, cartTotal, cartCount }}>
+        <CartContext.Provider value={{ 
+            cart, addToCart, removeFromCart, clearCart, cartTotal, cartCount,
+            showSuccessModal, setShowSuccessModal, lastAddedProduct
+        }}>
             {children}
         </CartContext.Provider>
     );

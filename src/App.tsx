@@ -24,6 +24,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { useSettings } from './hooks/useSettings';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const { getSetting } = useSettings();
@@ -73,6 +74,7 @@ function App() {
                 </Layout>
               } />
             </Routes>
+            <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
           </Router>
         </WishlistProvider>
       </CartProvider>

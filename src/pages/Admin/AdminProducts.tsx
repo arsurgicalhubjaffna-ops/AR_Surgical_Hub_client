@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search, Filter, Upload, Loader2 } from 'lucide-react';
 import { Product, Category, Subcategory } from '../../types';
@@ -106,15 +107,20 @@ const AdminProducts: React.FC = () => {
             }
             setModal(false);
             load();
+            toast.success(editId ? 'Product refined successfully' : 'Asset registered in system');
         } catch (err) {
-            alert('Failed to save product');
+            toast.error('Operation failed. Please try again.');
         }
     };
 
     const del = async (id: string) => {
         if (!confirm('Permanently delete this product from the catalog?')) return;
         const { error } = await insforge.database.from('products').delete().eq('id', id);
-        if (error) { alert('Failed to delete product'); return; }
+        if (error) { 
+            toast.error('Deletion failed');
+            return; 
+        }
+        toast.success('Asset purged from system');
         load();
     };
 

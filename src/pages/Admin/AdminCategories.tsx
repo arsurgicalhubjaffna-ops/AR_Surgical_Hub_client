@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import insforge from '../../lib/insforge';
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Search } from 'lucide-react';
 import { Category } from '../../types';
@@ -59,8 +60,9 @@ const AdminCategories: React.FC = () => {
             }
             setModal(false);
             load();
+            toast.success(editId ? 'Classification refined' : 'New category registered');
         } catch (err) {
-            alert('Failed to save category');
+            toast.error('System registry update failed');
         }
     };
 
@@ -69,9 +71,10 @@ const AdminCategories: React.FC = () => {
         try {
             const { error } = await insforge.database.from('categories').delete().eq('id', id);
             if (error) throw error;
+            toast.success('Classification deleted from registry');
             load();
         } catch (err) {
-            alert('Failed to delete category');
+            toast.error('Purge failed');
         }
     };
 
